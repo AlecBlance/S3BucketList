@@ -1,0 +1,24 @@
+{
+  "manifest_version":2,
+  "name":"Bucket List",
+  "version":"1.0",
+  "description":"List s3 buckets found in requests.",
+  "homepage_url":"https://github.com/AlecBlance/Bucket-List",
+  "icons":{
+    "48":"icons/bucket.jpg"
+  },
+  "permissions":[
+    "webRequest",
+    "<all_urls>"
+  ],
+  "background":{
+    "scripts":[
+      "background.js"
+    ]
+  },
+  "browser_action":{
+    "default_icon":"icons/bucket.jpg",
+    "default_title":"Bucket List",
+    "default_popup":"popup/index.html"
+  }
+}
