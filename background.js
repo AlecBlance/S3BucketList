@@ -17,6 +17,9 @@ function recordHttpResponse(response) {
         if (header.name.toLowerCase() == "x-amz-request-id") {
             anchor.href = response.url;
             hostname = anchor.hostname;
+            if (hostname == "s3.amazonaws.com"){
+              hostname += "/"+anchor.pathname.split("/")[1];
+            }
             if (!bucket.includes(hostname)) {
                 addNumber();
                 bucket.push(hostname);
