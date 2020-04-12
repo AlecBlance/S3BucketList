@@ -13,7 +13,7 @@ h3 {
 	margin-top:0;
 }
 #header {
-	padding:3% 0 0.1% 3%;
+	padding:3% 3% 0.1% 3%;
 	background-color:white;
 }
 #content {
@@ -22,4 +22,8 @@ h3 {
 label {
 	margin-right:3%;
 	float:right;
+}
+#right {
+	float:right;
+	display:inline-block;
 }

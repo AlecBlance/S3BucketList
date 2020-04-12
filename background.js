@@ -18,7 +18,7 @@ function recordHttpResponse(response) {
             anchor.href = response.url;
             hostname = anchor.hostname;
             if (hostname == "s3.amazonaws.com"){
-              hostname += "/"+anchor.pathname.split("/")[1];
+                hostname += "/"+anchor.pathname.split("/")[1];
             }
             if (!bucket.includes(hostname)) {
                 addNumber();
@@ -31,14 +31,27 @@ function recordHttpResponse(response) {
         responseHeaders: response.responseHeaders
     };
 }
+
 browser.webRequest.onHeadersReceived.addListener(
     recordHttpResponse, {
         urls: ["<all_urls>"]
     },
     ["responseHeaders"]
 );
+
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.greeting == "getS3Bucket") {
+        sendResponse({
+            response: bucket
+        });
+    }
+    if (request.greeting == "clear") {
+        bucket = [];
+        browser.browserAction.setBadgeText({
+            text: null
+        });
+        clicks = 0;
+        console.log("Received from clear");
         sendResponse({
             response: bucket
         });
