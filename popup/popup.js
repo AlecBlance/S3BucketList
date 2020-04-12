@@ -19,7 +19,7 @@ function getS3Bucket(action) {
   	sending.then(handleResponse, handleError);  
 }
 
-document.addEventListener("click", (e) => {
+document.getElementById("clear").addEventListener("click", (e) => {
 	getS3Bucket("clear");
 });
 

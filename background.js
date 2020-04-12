@@ -23,7 +23,6 @@ function recordHttpResponse(response) {
             if (!bucket.includes(hostname)) {
                 addNumber();
                 bucket.push(hostname);
-                // console.log("Bucket: "+hostname);
             }
         }
     });
@@ -51,7 +50,6 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             text: null
         });
         clicks = 0;
-        console.log("Received from clear");
         sendResponse({
             response: bucket
         });
