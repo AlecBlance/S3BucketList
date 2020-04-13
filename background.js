@@ -13,19 +13,21 @@ function addNumber() {
 }
 
 function recordHttpResponse(response) {
-    response.responseHeaders.forEach(function(header) {
-        if (header.name.toLowerCase() == "x-amz-request-id") {
-            anchor.href = response.url;
-            hostname = anchor.hostname;
-            if (hostname == "s3.amazonaws.com"){
-                hostname += "/"+anchor.pathname.split("/")[1];
+    if (response.statusCode != 404){
+        response.responseHeaders.forEach(function(header) {
+            if (header.name.toLowerCase() == "x-amz-request-id") {
+                anchor.href = response.url;
+                hostname = anchor.hostname;
+                if (hostname == "s3.amazonaws.com"){
+                    hostname += "/"+anchor.pathname.split("/")[1];
+                }
+                if (!bucket.includes(hostname)) {
+                    addNumber();
+                    bucket.push(hostname);
+                }
             }
-            if (!bucket.includes(hostname)) {
-                addNumber();
-                bucket.push(hostname);
-            }
-        }
-    });
+        });
+    }
     return {
         responseHeaders: response.responseHeaders
     };

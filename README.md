@@ -3,7 +3,7 @@
 BucketList is a Firefox plugin that records S3 Buckets found in requests. It is currently a work in progress and additional features will be added in the future.
 
 **Features to be added**
- - Clear button
+ - ~~Clear button~~
  - Remove bucket button
  - Start and stop bucket search
  - Additional S3 Bucket Checks
@@ -16,8 +16,8 @@ BucketList is a Firefox plugin that records S3 Buckets found in requests. It is 
 This plugin will also be ported to other browsers in the future. Stay tuned!
 
 ## Built with
-HTML - Markup Language
-Javascript - Programming Language
+ - HTML - Markup Language
+ - Javascript - Programming Language
 
 ## Author
  - Alec Blance 
