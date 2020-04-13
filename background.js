@@ -21,7 +21,12 @@ function recordHttpResponse(response) {
                     anchor.href = response.url;
                     hostname = anchor.hostname;
                     if (hostname == "s3.amazonaws.com"){
-                        hostname += "/"+anchor.pathname.split("/")[1];
+                        var path = anchor.pathname.split("/")[1]; 
+                        if (path=="favicon.ico"){
+                            hostname = bucket[0];
+                        } else {
+                            hostname += "/"+path;
+                        }
                     }
                     if (!bucket.includes(hostname)) {
                         addNumber();
