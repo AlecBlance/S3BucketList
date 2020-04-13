@@ -1,17 +1,15 @@
 var clicks = 0;
 var anchor = document.createElement('a');
 var bucket = [];
-var hostname;
 var record = true;
+var hostname;
 
-function addNumber() {
-    browser.browserAction.setBadgeText({
-        text: (++clicks).toString()
-    });
-    browser.browserAction.setBadgeBackgroundColor({
-        color: "green"
-    });
-}
+browser.webRequest.onHeadersReceived.addListener(
+    recordHttpResponse, {
+        urls: ["<all_urls>"]
+    },
+    ["responseHeaders"]
+);
 
 function recordHttpResponse(response) {
     if (record) {
@@ -41,39 +39,34 @@ function recordHttpResponse(response) {
     };
 }
 
-browser.webRequest.onHeadersReceived.addListener(
-    recordHttpResponse, {
-        urls: ["<all_urls>"]
-    },
-    ["responseHeaders"]
-);
+function addNumber() {
+    browser.browserAction.setBadgeText({
+        text: (++clicks).toString()
+    });
+    browser.browserAction.setBadgeBackgroundColor({
+        color: "green"
+    });
+}
 
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.greeting == "getS3Bucket") {
-        sendResponse({
-            response: bucket
-        });
-    }
-    if (request.greeting == "clear") {
-        bucket = [];
-        browser.browserAction.setBadgeText({
-            text: null
-        });
-        clicks = 0;
-        sendResponse({
-            response: bucket
-        });
-    }
-    if (request.greeting == "check") { 
-        sendResponse({
-            response: record
-        });
-    }
-    if (request.greeting == "change") {
+    if (request.action == "change") {
         if (record) {
             record = false;
         } else {
             record = true;
         }
+    }
+    if (request.action == "clear") {
+        bucket = [];
+        browser.browserAction.setBadgeText({
+            text: null
+        });
+        clicks = 0;
+    }
+    if (request.action == "check") { 
+        sendResponse({
+            "recordStatus": record,
+            "bucketList": bucket
+        });
     }
 });
