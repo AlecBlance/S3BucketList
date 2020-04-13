@@ -24,6 +24,7 @@ label {
 	float:right;
 }
 #right {
+	width:200px;
 	float:right;
 	display:inline-block;
 }
