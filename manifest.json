@@ -5,7 +5,7 @@
   "description":"List s3 buckets found in requests.",
   "homepage_url":"https://github.com/AlecBlance/Bucket-List",
   "icons":{
-    "48":"icons/bucket.png"
+    "512":"icons/bucket.png"
   },
   "permissions":[
     "webRequest",

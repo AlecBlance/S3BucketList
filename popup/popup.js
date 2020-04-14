@@ -22,10 +22,15 @@ document.getElementById("clear").addEventListener("click", () => {
   		} else {
   			record.checked = false;
   		}
+  		const parser = new DOMParser();
   		response.bucketList.forEach((bucket)=>{
-  			document.getElementById("content").innerHTML += 
-  			"<div class=\"bucket\"><div class=\"bucketName\"><p>"+bucket
-  			+"</p></div><a href=\"\" class=\"bucketDelete\"><div>Delete</div></a></div>";
+  			var html = `<div class="bucket"><div class="bucketName"><p>`+bucket
+  			+`</p></div><a href="" class="bucketDelete"><div>Delete</div></a></div>`;
+			var parsed = parser.parseFromString(html, `text/html`);
+			var tags = parsed.getElementsByTagName(`body`);
+			for (var tag of tags) {
+				document.getElementById("content").appendChild(tag); 
+			}
   		});
   		if (response.file != null){
   			save.download = "buckets.txt";
