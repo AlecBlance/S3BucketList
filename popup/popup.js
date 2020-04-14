@@ -24,7 +24,9 @@ document.getElementById("clear").addEventListener("click", () => {
   			document.getElementById("record").checked = false;
   		}
   		response.bucketList.forEach((bucket)=>{
-  			document.getElementById("content").innerHTML += "<p>"+bucket+"</p>";
+  			document.getElementById("content").innerHTML += 
+  			"<div class=\"bucket\"><div class=\"bucketName\"><p>"+bucket
+  			+"</p></div></div>";
   		});
   	}); 
 })();
