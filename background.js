@@ -51,8 +51,17 @@ function addNumber() {
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action == "change") {
         if (record) {
+            browser.browserAction.setBadgeText({
+                text: "!"
+            });
+            browser.browserAction.setBadgeBackgroundColor({
+                color: "orange"
+            });
             record = false;
         } else {
+            browser.browserAction.setBadgeText({
+                text: null
+            });
             record = true;
         }
     }
