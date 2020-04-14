@@ -73,9 +73,18 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         clicks = 0;
     }
     if (request.action == "check") { 
+        if (bucket != "") {
+            var content = "";
+            bucket.forEach((storage) => {
+                content += storage+"\n";
+            });
+            var blob = new Blob([content], {type: 'text/plain'});
+            blob = window.URL.createObjectURL(blob);
+        }
         sendResponse({
             "recordStatus": record,
-            "bucketList": bucket
+            "bucketList": bucket,
+            "file": blob
         });
     }
 });

@@ -67,6 +67,13 @@ h2 {
 	background-color:white;
 	text-decoration:none;
 }
+#save {
+	border-radius:3px;
+	color:#707070;
+	padding:1% 4%;
+	background-color:white;
+	text-decoration:none;
+}
 #right {
 	width:55px;
 }

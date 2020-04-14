@@ -18,15 +18,23 @@ document.getElementById("clear").addEventListener("click", () => {
     	"action": "check"
   	});
   	sending.then((response) => {
+  		var save = document.getElementById("save");
+  		var record = document.getElementById("record");
   		if (response.recordStatus) { 
-  			document.getElementById("record").checked = true;
+  			record.checked = true;
   		} else {
-  			document.getElementById("record").checked = false;
+  			record.checked = false;
   		}
   		response.bucketList.forEach((bucket)=>{
   			document.getElementById("content").innerHTML += 
   			"<div class=\"bucket\"><div class=\"bucketName\"><p>"+bucket
   			+"</p></div></div>";
   		});
+  		if (response.file != null){
+  			save.download = "buckets.txt";
+  			save.href = response.file;
+  		} else {
+  			save.removeAttribute("download"); 
+  		}
   	}); 
 })();

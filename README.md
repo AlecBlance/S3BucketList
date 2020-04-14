@@ -21,7 +21,12 @@ This plugin will also be ported to other browsers in the future. Stay tuned!
 
 ## Author
  - Alec Blance 
+## Contributors
+ - Almira Ruby Montalvo - Design
+## Acknowledgements
+ - [FreePik](https://www.flaticon.com/authors/freepik) - BucketList logo
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
 
 
