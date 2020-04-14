@@ -37,7 +37,7 @@ h2 {
 	display:flex;
 }
 .bucket {
-	padding:1% 0 1% 3%;
+	padding:1% 2% 1% 3%;
 	display:flex;
 	justify-content: space-between;
 	align-items: center;
@@ -48,6 +48,7 @@ h2 {
 	width:350px;
 }
 .bucketDelete {
+	text-decoration: none;
 	font-family: Medium;
 	border-radius: 3px;
 	display:flex;
@@ -56,6 +57,9 @@ h2 {
 	background-color:#f55f6a;
 	color:white;
 	padding:1%;
+}
+.bucketDelete:hover {
+	background-color:#e65761;
 }
 .bucket div{
 	margin:0 2%;
@@ -73,9 +77,6 @@ h2 {
 	padding:1% 4%;
 	background-color:white;
 	text-decoration:none;
-}
-#right {
-	width:55px;
 }
 label {
 	display:flex;
@@ -100,10 +101,19 @@ i {
 	/*padding:3% 3% 0.1% 3%;*/
 	background-color:#363B59;
 	display:flex;
-	display:flex;
-	justify-content: flex-end;
+	justify-content: space-between;
 }
 .end a {
 	font-family: Medium;
 	margin:0 0 0 2%;
+}
+#credits {
+	width:300px;
+}
+#credits a {
+	text-decoration: none;
+	color:white;
+}
+#name {
+	margin:0;
 }

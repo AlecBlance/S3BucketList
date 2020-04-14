@@ -60,7 +60,10 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             record = false;
         } else {
             browser.browserAction.setBadgeText({
-                text: null
+                text: clicks.toString()
+            });
+            browser.browserAction.setBadgeBackgroundColor({
+                color: "green"
             });
             record = true;
         }
@@ -86,5 +89,16 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             "bucketList": bucket,
             "file": blob
         });
+    }
+    if (request.action == "delete") {
+        browser.browserAction.setBadgeText({
+            text: (--clicks).toString()
+        });
+        if (clicks == 0) {
+            browser.browserAction.setBadgeText({
+                text: null
+            });
+        }
+        bucket.splice(bucket.indexOf(request.buckets) , 1);
     }
 });
