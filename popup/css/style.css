@@ -117,3 +117,9 @@ i {
 #name {
 	margin:0;
 }
+#content {
+	height:302px;
+	scrollbar-width: thin;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
