@@ -59,9 +59,15 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             });
             record = false;
         } else {
-            browser.browserAction.setBadgeText({
-                text: clicks.toString()
-            });
+            if (clicks == 0){
+                browser.browserAction.setBadgeText({
+                    text: null
+                });
+            } else {
+                browser.browserAction.setBadgeText({
+                    text: clicks.toString()
+                });
+            }
             browser.browserAction.setBadgeBackgroundColor({
                 color: "green"
             });
