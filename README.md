@@ -17,6 +17,9 @@ S3BucketList is a Firefox plugin that records S3 Buckets found in requests. It i
 
 This plugin will also be ported to other browsers in the future. Stay tuned!
 
+##Installation
+This plugin is already available in [Firefox Browser Add-ons](https://addons.mozilla.org/en-US/firefox/addon/s3-bucket-list/).
+
 ## Built with
  - HTML - Markup Language
  - Javascript - Programming Language
