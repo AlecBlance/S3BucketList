@@ -28,37 +28,38 @@ function recordHttpResponse(response) {
                         }
                     }
                     if (!bucket.includes(hostname)) {
-                        addNumber();
                         var req = new XMLHttpRequest();
                         req.open("GET", "https://"+hostname+"/?acl", true);
                         req.addEventListener("load", function() {
                             var currentPerm;
-                            var xml = req.responseXML.getElementsByTagName("URI");
-                            if (xml.length == 0){
-                                currentPerm = [[],[]];
-                                xml = req.responseXML.getElementsByTagName("Code");
-                                currentPerm[0].push("<b>"+xml[0].childNodes[0].nodeValue+"</b>");
-                                currentPerm[1].push(xml[0].nextElementSibling.childNodes[0].nodeValue);
-                                bucketPermission.push(currentPerm);
-                            } else {
-                                currentPerm = [["<b>All Users: </b>"],["<b>Authenticated: </b>"],["<b>Log Delivery: </b>"]];
-                                for (var i = 0; i < xml.length; i++){
-                                    var text = xml[i].childNodes[0].nodeValue;
-                                    if (text.includes("AllUsers")){
-                                        currentPerm[0].push(xml[i].parentNode.nextElementSibling.childNodes[0].nodeValue);
+                            if (req.responseXML != null) {
+                                var xml = req.responseXML.getElementsByTagName("URI");
+                                if (xml.length == 0){
+                                    currentPerm = [[],[]];
+                                    xml = req.responseXML.getElementsByTagName("Code");
+                                    currentPerm[0].push("<b>"+xml[0].childNodes[0].nodeValue+"</b>");
+                                    currentPerm[1].push(xml[0].nextElementSibling.childNodes[0].nodeValue);
+                                    bucketPermission.push(currentPerm);
+                                } else {
+                                    currentPerm = [["<b>All Users: </b>"],["<b>Authenticated: </b>"],["<b>Log Delivery: </b>"]];
+                                    for (var i = 0; i < xml.length; i++){
+                                        var text = xml[i].childNodes[0].nodeValue;
+                                        if (text.includes("AllUsers")){
+                                            currentPerm[0].push(xml[i].parentNode.nextElementSibling.childNodes[0].nodeValue);
+                                        }
+                                        if (text.includes("AuthenticatedUsers")){
+                                            currentPerm[1].push(xml[i].parentNode.nextElementSibling.childNodes[0].nodeValue);
+                                        }
+                                        if (text.includes("LogDelivery")){
+                                            currentPerm[2].push(xml[i].parentNode.nextElementSibling.childNodes[0].nodeValue);
+                                        }
                                     }
-                                    if (text.includes("AuthenticatedUsers")){
-                                        currentPerm[1].push(xml[i].parentNode.nextElementSibling.childNodes[0].nodeValue);
-                                    }
-                                    if (text.includes("LogDelivery")){
-                                        currentPerm[2].push(xml[i].parentNode.nextElementSibling.childNodes[0].nodeValue);
-                                    }
+                                    bucketPermission.push(currentPerm);
                                 }
-                                bucketPermission.push(currentPerm);
                             }
-                            
                         });
                         req.send();
+                        addNumber();
                         bucket.push(hostname);
                     }
                 }
