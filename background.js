@@ -1,6 +1,7 @@
 var clicks = 0;
 var anchor = document.createElement('a');
 var bucket = [];
+var bucketPermission = [];
 var record = true;
 var hostname;
 
@@ -20,7 +21,7 @@ function recordHttpResponse(response) {
                     hostname = anchor.hostname;
                     if (hostname == "s3.amazonaws.com"){
                         var path = anchor.pathname.split("/")[1]; 
-                        if (path=="favicon.ico"){
+                        if (hostname.includes("favicon.ico")){
                             hostname = bucket[0];
                         } else {
                             hostname += "/"+path;
@@ -28,6 +29,36 @@ function recordHttpResponse(response) {
                     }
                     if (!bucket.includes(hostname)) {
                         addNumber();
+                        var req = new XMLHttpRequest();
+                        req.open("GET", "https://"+hostname+"/?acl", true);
+                        req.addEventListener("load", function() {
+                            var currentPerm;
+                            var xml = req.responseXML.getElementsByTagName("URI");
+                            if (xml.length == 0){
+                                currentPerm = [[],[]];
+                                xml = req.responseXML.getElementsByTagName("Code");
+                                currentPerm[0].push("<b>"+xml[0].childNodes[0].nodeValue+"</b>");
+                                currentPerm[1].push(xml[0].nextElementSibling.childNodes[0].nodeValue);
+                                bucketPermission.push(currentPerm);
+                            } else {
+                                currentPerm = [["<b>All Users: </b>"],["<b>Authenticated: </b>"],["<b>Log Delivery: </b>"]];
+                                for (var i = 0; i < xml.length; i++){
+                                    var text = xml[i].childNodes[0].nodeValue;
+                                    if (text.includes("AllUsers")){
+                                        currentPerm[0].push(xml[i].parentNode.nextElementSibling.childNodes[0].nodeValue);
+                                    }
+                                    if (text.includes("AuthenticatedUsers")){
+                                        currentPerm[1].push(xml[i].parentNode.nextElementSibling.childNodes[0].nodeValue);
+                                    }
+                                    if (text.includes("LogDelivery")){
+                                        currentPerm[2].push(xml[i].parentNode.nextElementSibling.childNodes[0].nodeValue);
+                                    }
+                                }
+                                bucketPermission.push(currentPerm);
+                            }
+                            
+                        });
+                        req.send();
                         bucket.push(hostname);
                     }
                 }
@@ -76,6 +107,7 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }
     if (request.action == "clear") {
         bucket = [];
+        bucketPermission = [];
         browser.browserAction.setBadgeText({
             text: null
         });
@@ -93,6 +125,7 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         sendResponse({
             "recordStatus": record,
             "bucketList": bucket,
+            "bucketPermission": bucketPermission,
             "file": blob
         });
     }
@@ -105,6 +138,8 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                 text: null
             });
         }
-        bucket.splice(bucket.indexOf(request.buckets) , 1);
+        var index = bucket.indexOf(request.buckets);
+        bucket.splice( index, 1);
+        bucketPermission.splice(index, 1);
     }
 });

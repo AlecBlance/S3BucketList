@@ -23,31 +23,58 @@ document.getElementById("clear").addEventListener("click", () => {
   			record.checked = false;
   		}
   		const parser = new DOMParser();
-  		response.bucketList.forEach((bucket)=>{
-  			var html = `<div class="bucket"><div class="bucketName"><p>`+bucket
-  			+`</p></div><a href="" class="bucketDelete"><div>Delete</div></a></div>`;
+  		for (var i=0; i<response.bucketList.length; i++){
+  			var html = `<div class="bucket" style="cursor: pointer;"><i class="down"></i><div class="bucketName"><p>`+response.bucketList[i]
+  			+`</p></div><a href="" class="bucketDelete"><div>Delete</div></a></div><div class="bucketContent">`;
+  			for (var a =0; a < response.bucketPermission[i].length; a++){
+  				html += "<p>";
+  				response.bucketPermission[i][a].forEach((each)=>{
+  					html += each+" ";
+  				});
+  				html += "</p>";
+  			}
+  			html += "</div>";
 			var parsed = parser.parseFromString(html, `text/html`);
 			var tags = parsed.getElementsByTagName(`body`);
 			for (var tag of tags) {
 				document.getElementById("content").appendChild(tag); 
 			}
-  		});
+  		}
   		if (response.file != null){
   			save.download = "buckets.txt";
   			save.href = response.file;
   		} else {
   			save.removeAttribute("download"); 
   		}
+  		var bucket = document.getElementsByClassName("bucket");
   		var bucketDelete = document.getElementsByClassName("bucketDelete");
 		var bucketName = document.getElementsByClassName("bucketName");
 		for (var i = 0; i < bucketDelete.length; i++) {
-			bucketDelete[i].addEventListener('click', (target) => {
+			bucketDelete[i].addEventListener('click', function() {
 				var sending = browser.runtime.sendMessage({
 			    	"action" : "delete",
-			    	"buckets": target.currentTarget.bucket.textContent
+			    	"buckets": this.bucket.textContent
 			  	});
-			}, false);
+			});
 			bucketDelete[i].bucket = bucketName[i];
+			bucket[i].onmouseover = function () {
+				bucketDelete[this.num].style.visibility = "visible";
+			}
+			bucket[i].onmouseout = function () {
+				bucketDelete[this.num].style.visibility = "hidden";
+			}
+			bucket[i].num = i;
+			bucket[i].addEventListener('click', function() {
+				var content = this.nextElementSibling;
+				this.classList.toggle("active");
+			 	if (content.style.maxHeight){
+			      	content.style.maxHeight = null;
+			      	this.childNodes[0].className = "down";
+			    } else {
+			    	this.childNodes[0].className = "up";
+			      	content.style.maxHeight = content.scrollHeight + "px";
+			    } 
+			});
 		}
   	}); 
 })();

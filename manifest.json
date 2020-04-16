@@ -1,9 +1,9 @@
 {
   "manifest_version":2,
-  "name":"Bucket List",
-  "version":"1.0",
-  "description":"List s3 buckets found in requests.",
-  "homepage_url":"https://github.com/AlecBlance/Bucket-List",
+  "name":"S3 Bucket List",
+  "version":"1.1",
+  "description":"Finds Amazon S3 Buckets while browsing then records it in the add-on content.",
+  "homepage_url":"https://github.com/AlecBlance/S3BucketList",
   "icons":{
     "512":"icons/bucket.png"
   },
@@ -18,7 +18,7 @@
   },
   "browser_action":{
     "default_icon":"icons/bucket.png",
-    "default_title":"Bucket List",
+    "default_title":"S3 Bucket List",
     "default_popup":"popup/index.html"
   }
 }

@@ -44,6 +44,9 @@ h2 {
 	background-color:white;
 	border-top:1px solid #cccfe3;
 }
+.active, .bucket:hover {
+	background-color:#f7f7f7;
+}
 .bucketName {
 	width:350px;
 }
@@ -52,6 +55,7 @@ h2 {
 	font-family: Medium;
 	border-radius: 3px;
 	display:flex;
+	visibility: hidden;
 	font-size:0.8em;
 	align-items: center;
 	background-color:#f55f6a;
@@ -84,14 +88,15 @@ label {
 
 }
 i {
-  border: solid black;
-  border-width: 0 2px 2px 0;
-  display: inline-block;
-  padding: 3px;
+  	border: solid black;
+  	border-width: 0 2px 2px 0;
+  	display: inline-block;
+  	padding: 3px;
 }
 .down {
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
+	transition: 0.2s;
+  	transform: rotate(45deg);
+  	-webkit-transform: rotate(45deg);
 }
 .end {
 	padding:1% 2%;
@@ -122,4 +127,19 @@ i {
 	scrollbar-width: thin;
 	overflow-x: hidden;
 	overflow-y: auto;
+}
+.bucketContent {
+	background-color:white;
+	max-height: 0;
+	padding:0 2%;
+	transition: max-height 0.2s ease-out;
+	overflow: hidden;
+}
+.up {
+	transition: 0.2s;
+  	transform: rotate(-135deg);
+  	-webkit-transform: rotate(-135deg);
+}
+.bucketContent p {
+	margin:1% 0;
 }
