@@ -114,9 +114,12 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action == "check") { 
         if (bucket != "") {
             var content = "";
-            bucket.forEach((storage) => {
-                content += storage+"\n";
-            });
+            for (var i=0; i < bucket.length; i++){
+                content += "\n"+bucket[i]+": \n";
+                for (var a =0; a < bucketPermission[i].length; a++){
+                    content += bucketPermission[i][a].toString().replace(",", " ").replace("<b>","").replace("</b>","")+"\n";
+                }
+            }
             var blob = new Blob([content], {type: 'text/plain'});
             blob = window.URL.createObjectURL(blob);
         }
