@@ -20,19 +20,16 @@ function recordHttpResponse(response) {
                     anchor.href = response.url;
                     hostname = anchor.hostname;
                     if (hostname == "s3.amazonaws.com"){
-                        var path = anchor.pathname.split("/")[1]; 
-                        if (hostname.includes("favicon.ico")){
-                            hostname = bucket[0];
-                        } else {
-                            hostname += "/"+path;
-                        }
+                        hostname += "/"+anchor.pathname.split("/")[1];
                     }
-                    if (!bucket.includes(hostname)) {
+                    if (!bucket.includes(hostname) && !anchor.pathname.includes("favicon.ico")) {
                         var req = new XMLHttpRequest();
                         req.open("GET", "https://"+hostname+"/?acl", true);
                         req.addEventListener("load", function() {
                             var currentPerm;
-                            if (req.responseXML != null) {
+                            if (req.responseXML == null) {
+                                bucketPermission.push([["Error getting permission"]]);
+                            } else {
                                 var xml = req.responseXML.getElementsByTagName("URI");
                                 if (xml.length == 0){
                                     currentPerm = [[],[]];

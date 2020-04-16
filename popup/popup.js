@@ -26,17 +26,9 @@ document.getElementById("clear").addEventListener("click", () => {
   		for (var i=0; i<response.bucketList.length; i++){
   			var html = `<div class="bucket" style="cursor: pointer;"><i class="down"></i><div class="bucketName"><p>`+response.bucketList[i]
   			+`</p></div><a href="" class="bucketDelete"><div>Delete</div></a></div><div class="bucketContent">`;
-  			if (response.bucketPermission[i] != null){
-  				for (var a =0; a < response.bucketPermission[i].length; a++){
-	  				html += "<p>";
-	  				response.bucketPermission[i][a].forEach((each)=>{
-	  					html += each+" ";
-	  				});
-	  				html += "</p>";
-	  			}
-  			} else {
-  				html += "<p>Unable to get permissions";
-  			}
+			for (var a =0; a < response.bucketPermission[i].length; a++){
+				html += "<p>"+response.bucketPermission[i][a].toString().replace(",", " ")+"</p>";
+			}
   			html += "</div>";
 			var parsed = parser.parseFromString(html, `text/html`);
 			var tags = parsed.getElementsByTagName(`body`);
