@@ -1,7 +1,7 @@
 {
   "manifest_version":2,
   "name":"S3 Bucket List",
-  "version":"1.14",
+  "version":"1.15",
   "description":"Finds Amazon S3 Buckets while browsing then records it in the add-on content.",
   "homepage_url":"https://github.com/AlecBlance/S3BucketList",
   "icons":{
