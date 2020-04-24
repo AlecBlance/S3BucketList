@@ -4,17 +4,6 @@ S3BucketList is a Firefox plugin that records S3 Buckets found in requests. It i
 
 ![](screenshot.png)
 
-**Features to be added**
- - ~~Clear button~~
- - ~~Remove bucket button~~
- - ~~Start and stop bucket search~~
- - Additional S3 Bucket Checks
- - ~Misconfiguration and Permission check~
-
-**Optional Feature**
-
- - Add Google Storage Bucket check
-
 This plugin will also be ported to other browsers in the future. Stay tuned!
 
 ## Installation
