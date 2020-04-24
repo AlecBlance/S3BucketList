@@ -31,7 +31,7 @@ function recordHttpResponse(response) {
                                 bucketPermission.push([["Error getting permission"]]);
                             } else {
                                 var xml = req.responseXML.getElementsByTagName("URI");
-                                if (xml.length == 0){
+                                if (typeof(xml.length) == "undefined"){
                                     currentPerm = [[],[]];
                                     xml = req.responseXML.getElementsByTagName("Code");
                                     currentPerm[0].push("<b>"+xml[0].childNodes[0].nodeValue+"</b>");
