@@ -31,12 +31,16 @@ function recordHttpResponse(response) {
                                 bucketPermission.push([["Error getting permission"]]);
                             } else {
                                 var xml = req.responseXML.getElementsByTagName("URI");
-                                if (typeof(xml.length) == "undefined"){
+                                if (xml.length == 0){
                                     currentPerm = [[],[]];
                                     xml = req.responseXML.getElementsByTagName("Code");
-                                    currentPerm[0].push("<b>"+xml[0].childNodes[0].nodeValue+"</b>");
-                                    currentPerm[1].push(xml[0].nextElementSibling.childNodes[0].nodeValue);
-                                    bucketPermission.push(currentPerm);
+                                    if(typeof(xml[0]) == "undefined"){
+                                        bucketPermission.push([["Error getting permission"]]);
+                                    } else {
+                                        currentPerm[0].push("<b>"+xml[0].childNodes[0].nodeValue+"</b>");
+                                        currentPerm[1].push(xml[0].nextElementSibling.childNodes[0].nodeValue);
+                                        bucketPermission.push(currentPerm);
+                                    }
                                 } else {
                                     currentPerm = [["<b>All Users: </b>"],["<b>Authenticated: </b>"],["<b>Log Delivery: </b>"]];
                                     for (var i = 0; i < xml.length; i++){
