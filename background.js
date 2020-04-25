@@ -167,7 +167,7 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                 text: null
             });
         }
-        var index = bucket.indexOf(bucket.filter(bucket => bucket.bucketName == request.buckets));
+        var index = bucket.indexOf(bucket.filter(bucket => bucket.bucketName == request.buckets)[0]);
         bucket.splice(index, 1);
     }
 });
