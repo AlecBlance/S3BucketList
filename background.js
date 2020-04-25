@@ -54,26 +54,40 @@ function recordHttpResponse(response) {
                                         });
                                     }
                                 } else {
+                                    var permissionFilter;
                                     for (var i = 0; i < xml.length; i++){
                                         var text = xml[i].childNodes[0].nodeValue;
                                         var permission = xml[i].parentNode.nextElementSibling.childNodes[0].nodeValue;
                                         if (text.includes("AllUsers")){
-                                            bucketPermissions.push({
-                                                "title": "All Users",
-                                                "permission": [permission]
-                                            });
-                                        }
-                                        if (text.includes("AuthenticatedUsers")){
-                                            bucketPermissions.push({
-                                                "title": "Authenticated",
-                                                "permission": [permission]
-                                            });
-                                        }
-                                        if (text.includes("LogDelivery")){
-                                            bucketPermissions.push({
-                                                "title": "Log Delivery",
-                                                "permission": [permission]
-                                            });
+                                            permissionFilter = bucketPermissions.filter(bucket => bucket.title == "All Users");
+                                            if (permissionFilter.length == 0) {
+                                                bucketPermissions.push({
+                                                    "title": "All Users",
+                                                    "permission": [permission]
+                                                });
+                                            } else {
+                                                permissionFilter[0].permission.push(permission);
+                                            }
+                                        } else if (text.includes("AuthenticatedUsers")){
+                                            permissionFilter = bucketPermissions.filter(bucket => bucket.title == "Authenticated");
+                                            if (permissionFilter.length == 0) {
+                                                bucketPermissions.push({
+                                                    "title": "Authenticated",
+                                                    "permission": [permission]
+                                                });
+                                            } else {
+                                                permissionFilter[0].permission.push(permission);
+                                            }
+                                        } else if (text.includes("LogDelivery")){
+                                            permissionFilter = bucketPermissions.filter(bucket => bucket.title == "Log Delivery");
+                                            if (permissionFilter.length == 0) {
+                                                bucketPermissions.push({
+                                                    "title": "Log Delivery",
+                                                    "permission": [permission]
+                                                });
+                                            } else {
+                                                permissionFilter[0].permission.push(permission);
+                                            }
                                         }
                                     }
                                 }
