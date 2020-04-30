@@ -94,6 +94,21 @@ async function displayContent() {
 }
 
 async function deleteBucket() {
+	let buckets = await storage.get();
+    buckets = Object.keys(buckets);
+    buckets = buckets.length-1;
+    if (buckets != 0) {
+    	browser.browserAction.setBadgeText({
+	        text: buckets.toString()
+	    });
+	    browser.browserAction.setBadgeBackgroundColor({
+	        color: "green"
+	    });
+    } else {
+    	browser.browserAction.setBadgeText({
+	        text: null
+	    });
+    }
 	await storage.remove(this.bucket.textContent);
 }
 
