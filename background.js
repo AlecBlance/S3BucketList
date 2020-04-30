@@ -20,10 +20,19 @@ function fromPopup(toRecord,sender,sendResponse) {
         if (requests.hasListener(record)){
             requests.removeListener(record);
             status = false;
+            browser.browserAction.setBadgeText({
+                text: "!"
+            });
+            browser.browserAction.setBadgeBackgroundColor({
+                color: "orange"
+            });
         }
         else {
             listener();
             status = true;
+            browser.browserAction.setBadgeText({
+                text: null
+            });
         }
     } else {
         sendResponse({
