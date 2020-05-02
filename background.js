@@ -84,27 +84,21 @@ async function getPerms(xml, hostname) {
         permissions[title] = [perm];
     } else if (hasUri[0] && !hasCode[0]){
         for (let i = 0; i < hasUri.length; i++){
-            let text = hasUri[i].childNodes[0].nodeValue,
+            let permName,
+            text = hasUri[i].childNodes[0].nodeValue,
             perm = hasUri[i].parentNode.nextElementSibling
                    .childNodes[0].nodeValue;
             if (text.includes("AllUsers")){
-                if (permissions["All Users"]){
-                    permissions["All Users"].push(perm);
-                } else {
-                    permissions["All Users"] = [perm]
-                }
+                permName = "All Users";
             } else if (text.includes("AuthenticatedUsers")){
-                if (permissions["Authenticated"]){
-                    permissions["Authenticated"].push(perm);
-                } else {
-                    permissions["Authenticated"] = [perm]
-                }
+                permName = "Authenticated";
             } else if (text.includes("LogDelivery")){
-                if (permissions["Log Delivery"]){
-                    permissions["Log Delivery"].push(perm);
-                } else {
-                    permissions["Log Delivery"] = [perm];
-                }
+                permName = "Log Delivery";
+            }
+            if (permissions[permName]) {
+                permissions[permName].push(perm);
+            } else {
+                permissions[permName] = [perm];
             }
         }
     } else {
