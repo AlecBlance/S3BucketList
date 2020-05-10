@@ -117,9 +117,9 @@ function openContent() {
 	this.classList.toggle("active");
  	if (content.style.maxHeight){
       	content.style.maxHeight = null;
-      	this.childNodes[0].className = "down";
+      	this.childNodes[1].className = "down";
     } else {
-    	this.childNodes[0].className = "up";
+    	this.childNodes[1].className = "up";
       	content.style.maxHeight = content.scrollHeight + "px";
     } 
 }
