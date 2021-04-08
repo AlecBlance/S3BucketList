@@ -104,6 +104,9 @@ async function getPerms(xml, hostname) {
     } else {
         permissions.Error = ["Error getting permissions"];
     }
+    let request = await fetch('http://' + hostname + '/', { method: 'HEAD'});
+    if (request.ok) 
+        permissions["Access to &lt;ListBucketResult&gt;"] = ["True"];
     storage.set({
         [hostname]: permissions
     });
