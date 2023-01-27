@@ -13,6 +13,14 @@ This will be ported into Firefox as soon as they support service workers.
 5. Click "Load unpacked" and locate the extracted zip from step 2
 6. Browse
 
+## Checklist 
+- [ ] Filter
+- [ ] New UI
+- [ ] UI Bug fixes (scrolls to the top when deleting)
+- [ ] Port to Firefox (will do if service workers will be supported)
+- [ ] Performance boost
+
+
 ## Built with
  - HTML - Markup Language
  - Javascript - Programming Language
