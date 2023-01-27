@@ -1,25 +1,26 @@
 {
-  "manifest_version":2,
-  "name":"S3 Bucket List",
-  "version":"1.19",
-  "description":"Finds Amazon S3 Buckets while browsing then records it in the add-on content.",
-  "homepage_url":"https://github.com/AlecBlance/S3BucketList",
-  "icons":{
-    "512":"icons/bucket.png"
-  },
-  "permissions":[
-    "webRequest",
-    "storage",
-    "<all_urls>"
-  ],
-  "background":{
-    "scripts":[
-      "background.js"
-    ]
-  },
-  "browser_action":{
-    "default_icon":"icons/bucket.png",
-    "default_title":"S3 Bucket List",
-    "default_popup":"popup/index.html"
-  }
+	"manifest_version": 3,
+	"name": "S3 Bucket List",
+	"version": "2.01",
+	"description": "Finds Amazon S3 Buckets while browsing then records it in the add-on content.",
+	"homepage_url": "https://github.com/AlecBlance/S3BucketList",
+	"icons": {
+		"512": "icons/bucket.png"
+	},
+	"permissions": [
+		"webRequest",
+		"storage",
+		"unlimitedStorage",
+		"offscreen",
+		"tabs"
+	],
+	"host_permissions": ["<all_urls>"],
+	"background": {
+		"service_worker": "background.js"
+	},
+	"action": {
+		"default_icon": "icons/bucket.png",
+		"default_title": "S3 Bucket List",
+		"default_popup": "popup/index.html"
+	}
 }
