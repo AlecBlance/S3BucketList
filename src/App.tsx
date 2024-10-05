@@ -47,7 +47,7 @@ function App() {
 
   return (
     <Tabs defaultValue="good" className="w-full">
-      <div className="flex flex-col">
+      <div className="flex h-dvh flex-col">
         <div className="space-y-4 bg-card p-4">
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
@@ -70,9 +70,21 @@ function App() {
           </TabsList>
         </div>
         <Separator />
-        {types.map((type) => {
-          return <TabBuckets type={type} buckets={buckets[type]} />;
-        })}
+        <div className="grow overflow-y-auto">
+          {types.map((type) => {
+            return <TabBuckets type={type} buckets={buckets[type]} />;
+          })}
+        </div>
+        <Separator />
+        <div className="flex justify-between bg-white p-2 text-xs text-muted-foreground">
+          <p>
+            Made with ❤️ by{" "}
+            <a href="http://alecblance.com" className="underline">
+              Alec Blance
+            </a>
+          </p>
+          <p>v3.0.0</p>
+        </div>
       </div>
     </Tabs>
   );
