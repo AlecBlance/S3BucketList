@@ -41,9 +41,10 @@ function App() {
             </div> */}
           </div>
           <TabsList className="w-full gap-x-3 px-2">
-            {types.map((type) => (
-              <TabButton type={type} />
-            ))}
+            {types.map((type) => {
+              const number = buckets[type] ? buckets[type].length : 0;
+              return <TabButton type={type} number={number} />;
+            })}
           </TabsList>
         </div>
         <Separator />
