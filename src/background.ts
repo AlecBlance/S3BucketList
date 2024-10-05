@@ -134,7 +134,20 @@ const fromPopup = (
   _sender: chrome.runtime.MessageSender,
   _sendResponse: (response?: any) => void,
 ) => {
-  toRecord ? listener() : requests.removeListener(recordBuckets);
+  if (toRecord) {
+    listener();
+    chrome.action.setBadgeText({
+      text: "",
+    });
+  } else {
+    requests.removeListener(recordBuckets);
+    chrome.action.setBadgeText({
+      text: "!",
+    });
+    chrome.action.setBadgeBackgroundColor({
+      color: "orange",
+    });
+  }
 };
 
 listener();
