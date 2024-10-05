@@ -47,6 +47,7 @@ const getPerms = ($: cheerio.CheerioAPI, hostname: string): IBucketInfo => {
       hasUri.toArray().map((elem) => {
         title = $(elem).text().split("/").pop()!;
         perm = $(elem).parent().next().text();
+        permissions[title] = [...(permissions[title] || []), perm];
       });
       type = "good";
     } else {
@@ -54,8 +55,8 @@ const getPerms = ($: cheerio.CheerioAPI, hostname: string): IBucketInfo => {
       title = $(elem).text();
       perm = $(elem).next().text();
       type = "bad";
+      permissions[title] = [...(permissions[title] || []), perm];
     }
-    permissions[title] = [...(permissions[title] || []), perm];
   } catch (e) {
     type = "error";
     console.log(e);
