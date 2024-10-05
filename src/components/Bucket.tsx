@@ -14,10 +14,10 @@ const Bucket = ({ info }: { info: IBucketInfo }) => {
       className="first:rounded-tl-md first:rounded-tr-md"
     >
       <AccordionItem value="item-1">
-        <AccordionTrigger className="bg-card p-2 hover:no-underline">
+        <AccordionTrigger className="bg-card p-2 text-sm hover:no-underline">
           {info.hostname}
         </AccordionTrigger>
-        <AccordionContent className="bg-secondary p-2">
+        <AccordionContent className="bg-secondary p-2 text-xs">
           <div className="flex flex-col gap-y-2">
             {Object.entries(info.permissions).map(([key, value]) => (
               <div key={key} className="flex flex-col gap-y-1">
