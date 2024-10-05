@@ -4,25 +4,45 @@ import { Tabs, TabsList } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
 import { IBucketInfo } from "./types";
 import TabButton from "@/components/TabButton";
-import TabBuckets from "./components/TabBuckets";
+import TabBuckets from "@/components/TabBuckets";
+import { Switch } from "@/components/ui/switch";
 
 function App() {
   const [buckets, setBuckets] = useState<
     Partial<Record<string, IBucketInfo[]>>
   >({});
+  const [checked, setChecked] = useState(true);
+  const [isDoneChecking, setIsDoneChecking] = useState(false);
 
   const types = ["good", "bad", "error"];
 
   const filterBuckets = async () => {
-    const { buckets } = (await chrome.storage.session.get("buckets")) as {
+    const { buckets } = (await chrome.storage.local.get("buckets")) as {
       buckets: IBucketInfo[];
     };
+    if (!buckets || !buckets.length) return;
     const groupedBuckets = Object.groupBy(buckets, (bucket) => bucket.type);
     setBuckets(groupedBuckets);
   };
 
+  const checkRecord = async () => {
+    const { record } = (await chrome.storage.local.get("record")) as {
+      record: boolean;
+    };
+    console.log("to record", record);
+    setChecked(record);
+    setIsDoneChecking(true);
+  };
+
+  const handleCheck = async (isChecked: boolean) => {
+    chrome.storage.local.set({ record: isChecked });
+    chrome.runtime.sendMessage(isChecked);
+    setChecked(isChecked);
+  };
+
   useEffect(() => {
     filterBuckets();
+    checkRecord();
   }, []);
 
   return (
@@ -36,9 +56,11 @@ function App() {
                 Records, lists, inspects S3 from Network
               </p>
             </div>
-            {/* <div>
-              <Switch />
-            </div> */}
+            <div>
+              {isDoneChecking && (
+                <Switch checked={checked} onCheckedChange={handleCheck} />
+              )}
+            </div>
           </div>
           <TabsList className="w-full gap-x-3 px-2">
             {types.map((type) => {

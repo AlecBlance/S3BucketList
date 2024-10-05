@@ -2,8 +2,7 @@ import * as cheerio from "cheerio";
 import { IBucketInfo } from "./types";
 
 const requests = chrome.webRequest.onHeadersReceived;
-const storage = chrome.storage.session;
-let status = true;
+const storage = chrome.storage.local;
 
 /**
  * Gets the buckets stored in the session storage
@@ -41,19 +40,18 @@ const getPerms = ($: cheerio.CheerioAPI, hostname: string): IBucketInfo => {
   let type = "";
   const date = new Date().getTime();
   try {
-    let title = "";
-    let perm = "";
+    if (!hasUri.length && !hasCode.length) throw new Error("No permissions");
     if (hasUri.length) {
       hasUri.toArray().map((elem) => {
-        title = $(elem).text().split("/").pop()!;
-        perm = $(elem).parent().next().text();
+        const title = $(elem).text().split("/").pop()!;
+        const perm = $(elem).parent().next().text();
         permissions[title] = [...(permissions[title] || []), perm];
       });
       type = "good";
     } else {
       const elem = hasCode[0];
-      title = $(elem).text();
-      perm = $(elem).next().text();
+      const title = $(elem).text();
+      const perm = $(elem).next().text();
       type = "bad";
       permissions[title] = [...(permissions[title] || []), perm];
     }
@@ -134,30 +132,11 @@ const listener = async () => {
 const fromPopup = (
   toRecord: boolean,
   _sender: chrome.runtime.MessageSender,
-  sendResponse: (response?: any) => void,
+  _sendResponse: (response?: any) => void,
 ) => {
-  if (!toRecord)
-    return sendResponse({
-      record: status,
-    });
-  if (requests.hasListener(recordBuckets)) {
-    requests.removeListener(recordBuckets);
-    status = false;
-    chrome.action.setBadgeText({
-      text: "!",
-    });
-    chrome.action.setBadgeBackgroundColor({
-      color: "orange",
-    });
-  } else {
-    listener();
-    status = true;
-    chrome.action.setBadgeText({
-      text: "",
-    });
-  }
+  toRecord ? listener() : requests.removeListener(recordBuckets);
 };
 
 listener();
-storage.set({ buckets: [] });
+storage.set({ buckets: [], record: true });
 chrome.runtime.onMessage.addListener(fromPopup);
