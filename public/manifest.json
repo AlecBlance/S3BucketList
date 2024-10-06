@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "S3BucketList",
+  "description": "Search, lists, and checks S3 Buckets found in network requests",
+  "version": "3.0.0",
+  "icons": {
+    "16": "images/bucket-16.png",
+    "32": "images/bucket-32.png",
+    "48": "images/bucket-48.png",
+    "128": "images/bucket-128.png"
+  },
+  "action": {
+    "default_popup": "index.html"
+  },
+  "host_permissions": ["<all_urls>"],
+  "permissions": ["webRequest", "storage", "offscreen", "tabs"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  }
+}
