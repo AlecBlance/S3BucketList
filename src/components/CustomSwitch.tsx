@@ -15,6 +15,10 @@ const CustomSwitch = () => {
     const { record } = (await chrome.storage.local.get("record")) as {
       record: boolean;
     };
+    record &&
+      chrome.action.setBadgeText({
+        text: "",
+      });
     setChecked(record);
     setIsDoneChecking(true);
   };

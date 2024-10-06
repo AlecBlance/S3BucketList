@@ -25,9 +25,6 @@ function App() {
 
   useEffect(() => {
     filterBuckets();
-    chrome.action.setBadgeText({
-      text: "",
-    });
   }, []);
 
   return (
