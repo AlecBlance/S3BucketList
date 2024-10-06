@@ -18,8 +18,11 @@ const getBuckets = async () => {
  * @param buckets list of buckets from the storage
  */
 const addNumber = async (buckets: IBucketInfo[]) => {
+  const { lastSeen } = await storage.get("lastSeen");
   const bucketsListed =
-    buckets.filter((bucket) => bucket.type === "good").length + 1;
+    buckets.filter(
+      (bucket) => bucket.type === "good" && bucket.date > lastSeen.good,
+    ).length + 1;
   chrome.action.setBadgeText({
     text: bucketsListed.toString(),
   });
@@ -72,7 +75,7 @@ const getBucketInfo = async (hostname: string, buckets: IBucketInfo[]) => {
     const response = await fetch("http://" + hostname + "/?acl");
     const text = await response.text();
     const permissions = getPerms(cheerio.load(text), hostname);
-    storage.set({ buckets: [...buckets, permissions] });
+    storage.set({ buckets: [permissions, ...buckets] });
     return permissions;
   } catch (e) {
     console.log(e);
@@ -151,5 +154,9 @@ const fromPopup = (
 };
 
 listener();
-storage.set({ buckets: [], record: true });
+storage.set({
+  buckets: [],
+  record: true,
+  lastSeen: { good: 0, bad: 0, error: 0 },
+});
 chrome.runtime.onMessage.addListener(fromPopup);

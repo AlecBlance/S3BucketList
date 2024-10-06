@@ -1,19 +1,17 @@
-// import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
 import { IBucketInfo } from "./types";
 import TabButton from "@/components/TabButton";
 import TabBuckets from "@/components/TabBuckets";
-import { Switch } from "@/components/ui/switch";
+import CustomSwitch from "./components/CustomSwitch";
+import useLastSeen from "@/hooks/useLastSeen.hook";
 
 function App() {
+  useLastSeen();
   const [buckets, setBuckets] = useState<
     Partial<Record<string, IBucketInfo[]>>
   >({});
-  const [checked, setChecked] = useState(true);
-  const [isDoneChecking, setIsDoneChecking] = useState(false);
-
   const types = ["good", "bad", "error"];
 
   const filterBuckets = async () => {
@@ -25,24 +23,11 @@ function App() {
     setBuckets(groupedBuckets);
   };
 
-  const checkRecord = async () => {
-    const { record } = (await chrome.storage.local.get("record")) as {
-      record: boolean;
-    };
-    console.log("to record", record);
-    setChecked(record);
-    setIsDoneChecking(true);
-  };
-
-  const handleCheck = async (isChecked: boolean) => {
-    chrome.storage.local.set({ record: isChecked });
-    chrome.runtime.sendMessage(isChecked);
-    setChecked(isChecked);
-  };
-
   useEffect(() => {
     filterBuckets();
-    checkRecord();
+    chrome.action.setBadgeText({
+      text: "",
+    });
   }, []);
 
   return (
@@ -57,9 +42,7 @@ function App() {
               </p>
             </div>
             <div>
-              {isDoneChecking && (
-                <Switch checked={checked} onCheckedChange={handleCheck} />
-              )}
+              <CustomSwitch />
             </div>
           </div>
           <TabsList className="w-full gap-x-3 px-2">

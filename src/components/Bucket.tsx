@@ -5,9 +5,19 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { IBucketInfo } from "@/types";
+import { Badge } from "./ui/badge";
 
-const Bucket = ({ info }: { info: IBucketInfo }) => {
+const Bucket = ({
+  info,
+  lastSeen,
+}: {
+  info: IBucketInfo;
+  lastSeen: number;
+}) => {
   const isPermPresent = !!Object.keys(info.permissions).length;
+  const isNew = info.date > lastSeen;
+  console.log("lastSeen", lastSeen);
+  console.log("isNew", isNew);
   return (
     <Accordion
       type="single"
@@ -16,10 +26,15 @@ const Bucket = ({ info }: { info: IBucketInfo }) => {
     >
       <AccordionItem value="item-1">
         <AccordionTrigger
-          className="bg-card p-2 text-sm hover:no-underline"
+          className="min-w-0 bg-card p-2 text-sm hover:no-underline"
           isPermPresent={isPermPresent}
         >
-          {info.hostname}
+          <div className="mr-2 flex min-w-0 space-x-2">
+            <p className="min-w-0 overflow-hidden text-ellipsis">
+              {info.hostname}
+            </p>
+            {isNew && <Badge>new</Badge>}
+          </div>
         </AccordionTrigger>
         {isPermPresent && (
           <AccordionContent className="bg-secondary p-2 text-xs">
