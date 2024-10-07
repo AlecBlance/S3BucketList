@@ -62,6 +62,7 @@ const Bucket = ({
             <div>
               <DropdownMenu>
                 <DropdownMenuTrigger
+                  className="focus-visible:outline-none"
                   onClick={(e) => {
                     e.stopPropagation();
                   }}
