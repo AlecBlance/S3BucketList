@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Switch } from "@/components/ui/switch";
+import { memo } from "react";
 
 const CustomSwitch = () => {
   const [checked, setChecked] = useState(true);
@@ -31,4 +32,4 @@ const CustomSwitch = () => {
     isDoneChecking && <Switch checked={checked} onCheckedChange={handleCheck} />
   );
 };
-export default CustomSwitch;
+export default memo(CustomSwitch);

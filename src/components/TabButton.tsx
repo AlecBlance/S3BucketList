@@ -1,5 +1,7 @@
 import { TabsTrigger } from "@/components/ui/tabs";
 import useLastSeen from "@/store/useLastSeen.store";
+import { memo } from "react";
+import _ from "lodash";
 
 const TabButton = ({ type, number }: { type: string; number: number }) => {
   const { lastSeen } = useLastSeen((state) => state);
@@ -40,4 +42,9 @@ const TabButton = ({ type, number }: { type: string; number: number }) => {
     </div>
   );
 };
-export default TabButton;
+
+const areEqual = (prevProps: any, nextProps: any) => {
+  return _.isEqual(prevProps, nextProps);
+};
+
+export default memo(TabButton, areEqual);

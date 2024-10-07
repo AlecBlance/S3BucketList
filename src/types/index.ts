@@ -5,11 +5,7 @@ export interface IBucketInfo {
   date: number;
   hostname: string;
 }
-export interface ILastSeen {
-  good: number;
-  bad: number;
-  error: number;
-}
+export type ILastSeen = Record<string, number>;
 
 export interface IUseLastSeen {
   lastSeen: ILastSeen;
