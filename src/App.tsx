@@ -5,11 +5,12 @@ import { IBucketType } from "./types";
 import TabButton from "@/components/TabButton";
 import TabBuckets from "@/components/TabBuckets";
 import CustomSwitch from "./components/CustomSwitch";
-import useLastSeen from "@/hooks/useLastSeen.hook";
 import useBuckets from "@/store/useBuckets.store";
+import useLastSeen from "@/store/useLastSeen.store";
 
 function App() {
-  useLastSeen();
+  const { setLastSeen } = useLastSeen.getState();
+
   const { buckets, setBuckets } = useBuckets((state) => state);
   const types = ["good", "bad", "error"];
 
@@ -20,8 +21,17 @@ function App() {
     setBuckets(buckets);
   };
 
+  const lastSeen = async () => {
+    const { lastSeen } = await chrome.storage.local.get("lastSeen");
+    chrome.storage.local.set({
+      lastSeen: { ...lastSeen, good: new Date().getTime() },
+    });
+    setLastSeen(lastSeen);
+  };
+
   useEffect(() => {
     filterBuckets();
+    lastSeen();
   }, []);
 
   return (
