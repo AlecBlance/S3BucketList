@@ -1,7 +1,7 @@
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList } from "@/components/ui/tabs";
-import { useEffect } from "react";
-import { IBucketType } from "./types";
+import { useEffect, useState } from "react";
+import { IBucketType, ILastSeen } from "./types";
 import TabButton from "@/components/TabButton";
 import TabBuckets from "@/components/TabBuckets";
 import CustomSwitch from "./components/CustomSwitch";
@@ -10,6 +10,9 @@ import useLastSeen from "@/store/useLastSeen.store";
 
 function App() {
   const { setLastSeen } = useLastSeen.getState();
+  const [currentLastSeen, setCurrentLastSeen] = useState<Partial<ILastSeen>>(
+    {},
+  );
 
   const { buckets, setBuckets } = useBuckets((state) => state);
   const types = ["good", "bad", "error"];
@@ -23,10 +26,12 @@ function App() {
 
   const lastSeen = async () => {
     const { lastSeen } = await chrome.storage.local.get("lastSeen");
+    const updatedLastSeen = { ...lastSeen, good: new Date().getTime() };
     chrome.storage.local.set({
-      lastSeen: { ...lastSeen, good: new Date().getTime() },
+      lastSeen: updatedLastSeen,
     });
-    setLastSeen(lastSeen);
+    setLastSeen(updatedLastSeen);
+    setCurrentLastSeen(lastSeen);
   };
 
   useEffect(() => {
@@ -59,7 +64,13 @@ function App() {
         <Separator />
         <div className="grow overflow-y-auto">
           {types.map((type) => {
-            return <TabBuckets type={type} buckets={buckets[type]} />;
+            return (
+              <TabBuckets
+                type={type}
+                buckets={buckets[type]}
+                lastSeen={currentLastSeen[type]!}
+              />
+            );
           })}
         </div>
         <Separator />

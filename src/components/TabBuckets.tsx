@@ -1,21 +1,18 @@
 import { TabsContent } from "@/components/ui/tabs";
 import { IBucketInfo } from "@/types";
 import Bucket from "@/components/Bucket";
-import useLastSeen from "@/store/useLastSeen.store";
 import { memo } from "react";
 import _ from "lodash";
 
 const TabBuckets = ({
   type,
   buckets,
+  lastSeen,
 }: {
   type: string;
   buckets: IBucketInfo[];
+  lastSeen: number;
 }) => {
-  const lastSeen = useLastSeen(
-    (state) => state.lastSeen[type as keyof typeof state.lastSeen],
-  );
-
   return (
     <TabsContent value={type}>
       <div className="grow p-2">

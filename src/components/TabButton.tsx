@@ -4,7 +4,7 @@ import { memo } from "react";
 import _ from "lodash";
 
 const TabButton = ({ type, number }: { type: string; number: number }) => {
-  const { lastSeen } = useLastSeen((state) => state);
+  const { lastSeen, addLastSeen } = useLastSeen((state) => state);
   const color =
     type === "good"
       ? "data-[state=active]:bg-green-600"
@@ -21,6 +21,7 @@ const TabButton = ({ type, number }: { type: string; number: number }) => {
   const handleLastSeenTrigger = async () => {
     const dateNow = new Date().getTime();
     chrome.storage.local.set({ lastSeen: { ...lastSeen, [type]: dateNow } });
+    addLastSeen({ type, date: dateNow });
   };
 
   return (
