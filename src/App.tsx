@@ -1,15 +1,16 @@
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList } from "@/components/ui/tabs";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { IBucketType } from "./types";
 import TabButton from "@/components/TabButton";
 import TabBuckets from "@/components/TabBuckets";
 import CustomSwitch from "./components/CustomSwitch";
 import useLastSeen from "@/hooks/useLastSeen.hook";
+import useBuckets from "@/store/useBuckets.store";
 
 function App() {
   useLastSeen();
-  const [buckets, setBuckets] = useState<IBucketType>({});
+  const { buckets, setBuckets } = useBuckets((state) => state);
   const types = ["good", "bad", "error"];
 
   const filterBuckets = async () => {
@@ -22,8 +23,6 @@ function App() {
   useEffect(() => {
     filterBuckets();
   }, []);
-
-  if (Object.keys(buckets).length === 0) return null;
 
   return (
     <Tabs defaultValue="good" className="w-full">

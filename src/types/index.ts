@@ -18,6 +18,6 @@ export interface IUseLastSeen {
 }
 
 export interface IUseBuckets {
-  buckets: Partial<Record<string, IBucketInfo[]>>;
-  setBuckets: (buckets: Partial<Record<string, IBucketInfo[]>>) => void;
+  buckets: IBucketType;
+  setBuckets: (buckets: IBucketType) => void;
 }

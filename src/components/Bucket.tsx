@@ -6,18 +6,41 @@ import {
 } from "@/components/ui/accordion";
 import { IBucketInfo } from "@/types";
 import { Badge } from "./ui/badge";
+import { EllipsisVertical, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import useBuckets from "@/store/useBuckets.store";
 
 const Bucket = ({
   info,
   lastSeen,
+  buckets,
+  type,
 }: {
   info: IBucketInfo;
   lastSeen: number;
+  buckets: IBucketInfo[];
+  type: string;
 }) => {
+  const { buckets: bucketState, setBuckets } = useBuckets((state) => state);
   const isPermPresent = !!Object.keys(info.permissions).length;
   const isNew = info.date > lastSeen;
-  console.log("lastSeen", lastSeen);
-  console.log("isNew", isNew);
+
+  const handleRemove = () => {
+    const updatedBucket = {
+      ...bucketState,
+      [type]: buckets.filter((b: IBucketInfo) => b.hostname !== info.hostname),
+    };
+    chrome.storage.local.set({
+      buckets: updatedBucket,
+    });
+    setBuckets(updatedBucket);
+  };
+
   return (
     <Accordion
       type="single"
@@ -29,11 +52,39 @@ const Bucket = ({
           className="min-w-0 bg-card p-2 text-sm hover:no-underline"
           isPermPresent={isPermPresent}
         >
-          <div className="mr-2 flex min-w-0 space-x-2">
-            <p className="min-w-0 overflow-hidden text-ellipsis">
-              {info.hostname}
-            </p>
-            {isNew && <Badge>new</Badge>}
+          <div className="flex w-full min-w-0 items-center justify-between">
+            <div className="flex min-w-0 items-center space-x-2">
+              <p className="min-w-0 overflow-hidden text-ellipsis">
+                {info.hostname}
+              </p>
+              {isNew && <Badge>new</Badge>}
+            </div>
+            <div>
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  <EllipsisVertical className="z-10 h-4 w-6 hover:text-slate-400" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  {/* <DropdownMenuItem>
+                    <Ban className="mr-2 h-4 w-4" />
+                    <span>Blacklist</span>
+                  </DropdownMenuItem> */}
+                  <DropdownMenuItem onClick={handleRemove}>
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    <span>Remove</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </AccordionTrigger>
         {isPermPresent && (
