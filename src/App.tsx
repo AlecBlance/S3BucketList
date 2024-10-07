@@ -7,6 +7,7 @@ import TabBuckets from "@/components/TabBuckets";
 import CustomSwitch from "./components/CustomSwitch";
 import useBuckets from "@/store/useBuckets.store";
 import useLastSeen from "@/store/useLastSeen.store";
+import Menu from "@/components/Menu";
 
 function App() {
   const { setLastSeen } = useLastSeen.getState();
@@ -54,12 +55,15 @@ function App() {
               <CustomSwitch />
             </div>
           </div>
-          <TabsList className="w-full gap-x-3 px-2">
-            {types.map((type) => {
-              const number = buckets[type] ? buckets[type].length : 0;
-              return <TabButton type={type} number={number} />;
-            })}
-          </TabsList>
+          <div className="flex items-center gap-x-2">
+            <TabsList className="w-full gap-x-3 px-2">
+              {types.map((type) => {
+                const number = buckets[type] ? buckets[type].length : 0;
+                return <TabButton type={type} number={number} />;
+              })}
+            </TabsList>
+            <Menu />
+          </div>
         </div>
         <Separator />
         <div className="grow overflow-y-auto">
