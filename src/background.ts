@@ -1,5 +1,5 @@
 import * as cheerio from "cheerio";
-import { IBucketInfo } from "./types";
+import { IBucketType } from "./types";
 
 const requests = chrome.webRequest.onHeadersReceived;
 const storage = chrome.storage.local;
@@ -9,7 +9,7 @@ const storage = chrome.storage.local;
  */
 const getBuckets = async () => {
   const { buckets } = await storage.get("buckets");
-  return buckets as IBucketInfo[];
+  return buckets as IBucketType;
 };
 
 /**
@@ -17,12 +17,10 @@ const getBuckets = async () => {
  *
  * @param buckets list of buckets from the storage
  */
-const addNumber = async (buckets: IBucketInfo[]) => {
+const addNumber = async (buckets: IBucketType) => {
   const { lastSeen } = await storage.get("lastSeen");
   const bucketsListed =
-    buckets.filter(
-      (bucket) => bucket.type === "good" && bucket.date > lastSeen.good,
-    ).length + 1;
+    buckets.good.filter((bucket) => bucket.date > lastSeen.good).length + 1;
   chrome.action.setBadgeText({
     text: bucketsListed.toString(),
   });
@@ -36,7 +34,7 @@ const addNumber = async (buckets: IBucketInfo[]) => {
  *
  * @param $ the cheerio object
  */
-const getPerms = ($: cheerio.CheerioAPI, hostname: string): IBucketInfo => {
+const getPerms = ($: cheerio.CheerioAPI, hostname: string) => {
   const permissions = {} as Record<string, string[]>;
   const hasUri = $("URI");
   const hasCode = $("Code");
@@ -62,7 +60,7 @@ const getPerms = ($: cheerio.CheerioAPI, hostname: string): IBucketInfo => {
     type = "error";
     console.log(e);
   }
-  return { type, permissions, date, hostname };
+  return { type, info: { permissions, date, hostname } };
 };
 
 /**
@@ -70,12 +68,17 @@ const getPerms = ($: cheerio.CheerioAPI, hostname: string): IBucketInfo => {
  *
  * @param hostname the hostname of the bucket
  */
-const getBucketInfo = async (hostname: string, buckets: IBucketInfo[]) => {
+const getBucketInfo = async (hostname: string, buckets: IBucketType) => {
   try {
     const response = await fetch("http://" + hostname + "/?acl");
     const text = await response.text();
     const permissions = getPerms(cheerio.load(text), hostname);
-    storage.set({ buckets: [permissions, ...buckets] });
+    storage.set({
+      buckets: {
+        ...buckets,
+        [permissions.type]: [permissions.info, ...buckets[permissions.type]],
+      },
+    });
     return permissions;
   } catch (e) {
     console.log(e);
@@ -100,9 +103,9 @@ const recordBuckets = (
     if (hostname === "s3.amazonaws.com") {
       hostname += "/" + pathname.split("/")[1];
     }
-    const isPresent = buckets.some(
-      (bucket: IBucketInfo) => bucket.hostname === hostname,
-    );
+    const isPresent = Object.values(buckets)
+      .flat()
+      .some((bucket) => bucket.hostname === hostname);
     const noFavicon = !hostname.includes("favicon.ico");
     if (!isPresent && noFavicon) {
       getBucketInfo(hostname, buckets).then((permissions) => {
@@ -155,7 +158,7 @@ const fromPopup = (
 
 listener();
 storage.set({
-  buckets: [],
+  buckets: { good: [], bad: [], error: [] },
   record: true,
   lastSeen: { good: 0, bad: 0, error: 0 },
 });

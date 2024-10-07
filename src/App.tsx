@@ -1,7 +1,7 @@
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
-import { IBucketInfo } from "./types";
+import { IBucketType } from "./types";
 import TabButton from "@/components/TabButton";
 import TabBuckets from "@/components/TabBuckets";
 import CustomSwitch from "./components/CustomSwitch";
@@ -9,23 +9,21 @@ import useLastSeen from "@/hooks/useLastSeen.hook";
 
 function App() {
   useLastSeen();
-  const [buckets, setBuckets] = useState<
-    Partial<Record<string, IBucketInfo[]>>
-  >({});
+  const [buckets, setBuckets] = useState<IBucketType>({});
   const types = ["good", "bad", "error"];
 
   const filterBuckets = async () => {
     const { buckets } = (await chrome.storage.local.get("buckets")) as {
-      buckets: IBucketInfo[];
+      buckets: IBucketType;
     };
-    if (!buckets || !buckets.length) return;
-    const groupedBuckets = Object.groupBy(buckets, (bucket) => bucket.type);
-    setBuckets(groupedBuckets);
+    setBuckets(buckets);
   };
 
   useEffect(() => {
     filterBuckets();
   }, []);
+
+  if (Object.keys(buckets).length === 0) return null;
 
   return (
     <Tabs defaultValue="good" className="w-full">

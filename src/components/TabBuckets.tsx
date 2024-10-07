@@ -8,7 +8,7 @@ const TabBuckets = ({
   buckets,
 }: {
   type: string;
-  buckets: IBucketInfo[] | undefined;
+  buckets: IBucketInfo[];
 }) => {
   const lastSeen = useLastSeen(
     (state) => state.lastSeen[type as keyof typeof state.lastSeen],
@@ -17,7 +17,7 @@ const TabBuckets = ({
   return (
     <TabsContent value={type}>
       <div className="grow p-2">
-        {buckets ? (
+        {buckets.length ? (
           buckets.map((info) => <Bucket info={info} lastSeen={lastSeen} />)
         ) : (
           <p className="p-2">No {type} buckets found</p>
