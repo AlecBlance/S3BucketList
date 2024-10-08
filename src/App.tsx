@@ -81,7 +81,11 @@ function App() {
         <div className="flex justify-between bg-white p-2 text-xs text-muted-foreground">
           <p>
             Made with ❤️ by{" "}
-            <a href="http://alecblance.com" className="underline">
+            <a
+              href="http://alecblance.com"
+              className="underline"
+              target="_blank"
+            >
               Alec Blance
             </a>
           </p>
