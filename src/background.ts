@@ -52,15 +52,15 @@ const getPerms = ($: cheerio.CheerioAPI, hostname: string) => {
       });
       type = "good";
     }
-    if (hasCode.length) {
+    if (hasListBucket.length) {
+      permissions["ListBucket"] = ["True"];
+      type = "good";
+    } else if (hasCode.length) {
       const elem = hasCode[0];
       const title = $(elem).text();
       const perm = $(elem).next().text();
       type = "bad";
       permissions[title] = [...(permissions[title] || []), perm];
-    }
-    if (hasListBucket.length) {
-      permissions["ListBucket"] = ["True"];
     }
   } catch (e) {
     type = "error";
