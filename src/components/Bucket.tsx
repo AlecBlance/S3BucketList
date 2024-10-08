@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/accordion";
 import { IBucketInfo } from "@/types";
 import { Badge } from "./ui/badge";
-import { EllipsisVertical, Trash2 } from "lucide-react";
+import { EllipsisVertical, ExternalLink, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -75,10 +75,14 @@ const Bucket = ({
                     e.stopPropagation();
                   }}
                 >
-                  {/* <DropdownMenuItem>
-                    <Ban className="mr-2 h-4 w-4" />
-                    <span>Blacklist</span>
-                  </DropdownMenuItem> */}
+                  <DropdownMenuItem
+                    onClick={() => {
+                      chrome.tabs.create({ url: `http://${info.hostname}` });
+                    }}
+                  >
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    <span>Open</span>
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleRemove}>
                     <Trash2 className="mr-2 h-4 w-4" />
                     <span>Remove</span>
