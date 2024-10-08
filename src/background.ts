@@ -38,10 +38,12 @@ const getPerms = ($: cheerio.CheerioAPI, hostname: string) => {
   const permissions = {} as Record<string, string[]>;
   const hasUri = $("URI");
   const hasCode = $("Code");
+  const hasListBucket = $("ListBucketResult");
   let type = "";
   const date = new Date().getTime();
   try {
-    if (!hasUri.length && !hasCode.length) throw new Error("No permissions");
+    if (!hasUri.length && !hasCode.length && hasListBucket)
+      throw new Error("No permissions");
     if (hasUri.length) {
       hasUri.toArray().map((elem) => {
         const title = $(elem).text().split("/").pop()!;
@@ -49,12 +51,16 @@ const getPerms = ($: cheerio.CheerioAPI, hostname: string) => {
         permissions[title] = [...(permissions[title] || []), perm];
       });
       type = "good";
-    } else {
+    }
+    if (hasCode.length) {
       const elem = hasCode[0];
       const title = $(elem).text();
       const perm = $(elem).next().text();
       type = "bad";
       permissions[title] = [...(permissions[title] || []), perm];
+    }
+    if (hasListBucket.length) {
+      permissions["ListBucket"] = ["True"];
     }
   } catch (e) {
     type = "error";
@@ -70,8 +76,10 @@ const getPerms = ($: cheerio.CheerioAPI, hostname: string) => {
  */
 const getBucketInfo = async (hostname: string, buckets: IBucketType) => {
   try {
-    const response = await fetch("http://" + hostname + "/?acl");
-    const text = await response.text();
+    const text = await Promise.all([
+      fetch("http://" + hostname + "/?acl").then((res) => res.text()),
+      fetch("http://" + hostname + "/").then((res) => res.text()),
+    ]).then(([aclText, listBucketText]) => aclText + listBucketText);
     const permissions = getPerms(cheerio.load(text), hostname);
     storage.set({
       buckets: {
