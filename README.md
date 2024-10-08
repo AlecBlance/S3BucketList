@@ -1,38 +1,34 @@
-# S3BucketList v2.1
+# S3BucketList v3.0.0
 
-S3BucketList is a Chrome extension that records S3 Buckets found while browsing. 
-This will be ported into Firefox as soon as they support service workers. 
+Search, lists, and checks S3 Buckets found in network requests while you are browsing.
 
-![](screenshot.png)
+![alt text](image.png)
 
 ## Installation
-1. Download the S3BucketList zip
-2. Extract 
-3. Go to Google Chrome's Settings - icon > Tools > Extensions
+
+1. Download the latest release zip
+2. Extract
+3. Go to Google Chrome's Settings > Tools > Extensions
 4. Enable Developer Mode ( toggle button in top-right corner )
 5. Click "Load unpacked" and locate the extracted zip from step 2
-6. Browse
+6. Browse the internet 🎉
 
-## Checklist 
-- [ ] Filter
-- [ ] New UI
-- [ ] UI Bug fixes (scrolls to the top when deleting)
-- [ ] Port to Firefox (will do if service workers will be supported)
-- [ ] Performance boost
+## Features
 
+- Filters S3Buckets
+- Extract ACL permissions
+- Download buckets recorded
+- Manage buckets recorded
 
-## Built with
- - HTML - Markup Language
- - Javascript - Programming Language
+## Roadmap
 
-## Author
- - Alec Blance 
-## Contributors
- - Almira Ruby Montalvo - Design
+- Add CI/CD for releases and versioning
+- Add blacklisting
+
+## Tech Stack
+
+**Client:** React, TailwindCSS, shadcn, zustand, Chrome API
+
 ## Acknowledgements
- - [FreePik](https://www.flaticon.com/authors/freepik) - BucketList logo
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
-
-
+Icon: <a href="https://www.flaticon.com/free-icons/bucket" title="bucket icons">Bucket icons created by Yuan Design - Flaticon</a>
