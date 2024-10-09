@@ -5,18 +5,21 @@ import _ from "lodash";
 
 const TabButton = ({ type, number }: { type: string; number: number }) => {
   const { lastSeen, addLastSeen } = useLastSeen((state) => state);
-  const color =
-    type === "good"
-      ? "data-[state=active]:bg-green-600"
-      : type === "bad"
-        ? "data-[state=active]:bg-yellow-600"
-        : "data-[state=active]:bg-red-600";
-  const tabNumberColor =
-    type === "good"
-      ? "peer-data-[state=inactive]:bg-green-600"
-      : type === "bad"
-        ? "peer-data-[state=inactive]:bg-yellow-600"
-        : "peer-data-[state=inactive]:bg-red-600";
+
+  const color: Record<string, Record<string, string>> = {
+    good: {
+      button: "data-[state=active]:bg-green-600",
+      number: "peer-data-[state=inactive]:bg-green-600",
+    },
+    bad: {
+      button: "data-[state=active]:bg-yellow-600",
+      number: "peer-data-[state=inactive]:bg-yellow-600",
+    },
+    error: {
+      button: "data-[state=active]:bg-red-600",
+      number: "peer-data-[state=inactive]:bg-red-600",
+    },
+  };
 
   const handleLastSeenTrigger = async () => {
     const dateNow = new Date().getTime();
@@ -28,14 +31,14 @@ const TabButton = ({ type, number }: { type: string; number: number }) => {
     <div className="relative flex grow">
       <TabsTrigger
         value={type}
-        className={`grow ${color} peer data-[state=active]:text-white`}
+        className={`grow ${color[type]["button"]} peer data-[state=active]:text-white`}
         onClick={handleLastSeenTrigger}
       >
         {type}
       </TabsTrigger>
       {number ? (
         <div
-          className={`absolute -top-2 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs peer-data-[state=inactive]:text-white ${tabNumberColor} font-bold`}
+          className={`absolute -top-2 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs peer-data-[state=inactive]:text-white ${color[type]["number"]} font-bold`}
         >
           {number}
         </div>
