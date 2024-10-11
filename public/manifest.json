@@ -13,7 +13,7 @@
     "default_popup": "index.html"
   },
   "host_permissions": ["<all_urls>"],
-  "permissions": ["webRequest", "storage", "offscreen", "tabs"],
+  "permissions": ["webRequest", "storage"],
   "background": {
     "service_worker": "background.js",
     "type": "module"
