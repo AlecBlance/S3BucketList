@@ -1,5 +1,6 @@
 import * as cheerio from "cheerio";
 import { IBucketType } from "./types";
+import { getStorageKeyValue } from "@/utils/helper.utils";
 
 const requests = chrome.webRequest.onHeadersReceived;
 const storage = chrome.storage.local;
@@ -165,9 +166,15 @@ const fromPopup = (
 };
 
 listener();
-storage.set({
-  buckets: { good: [], bad: [], error: [] },
-  record: true,
-  lastSeen: { good: 0, bad: 0, error: 0 },
+
+getStorageKeyValue("buckets").then((response: Record<string, any>) => {
+  if (Object.keys(response).length && Object.keys(response.buckets).length)
+    return;
+  storage.set({
+    buckets: { good: [], bad: [], error: [] },
+    record: true,
+    lastSeen: { good: 0, bad: 0, error: 0 },
+  });
 });
+
 chrome.runtime.onMessage.addListener(fromPopup);
