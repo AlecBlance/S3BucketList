@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc -b && vite build",
-    "lint": "eslint ."
+    "lint": "eslint . && tsc",
+    "release": "pnpm run build && changeset publish"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.0",
@@ -26,6 +27,7 @@
     "zustand": "5.0.0-rc.2"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.27.9",
     "@eslint/js": "^9.9.0",
     "@types/chrome": "^0.0.273",
     "@types/lodash": "^4.17.10",
