@@ -89,7 +89,7 @@ function App() {
               Alec Blance
             </a>
           </p>
-          <p>v3.0.0</p>
+          <p>v3.0.1</p>
         </div>
       </div>
     </Tabs>
