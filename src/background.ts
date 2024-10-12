@@ -108,7 +108,9 @@ const recordBuckets = (
   );
   if (!s3) return;
   getBuckets().then((buckets) => {
-    let { hostname, pathname } = new URL(response.url);
+    const url = new URL(response.url);
+    let hostname = url.hostname;
+    const pathname = url.pathname;
     if (hostname === "s3.amazonaws.com") {
       hostname += "/" + pathname.split("/")[1];
     }
@@ -118,7 +120,7 @@ const recordBuckets = (
     const noFavicon = !hostname.includes("favicon.ico");
     if (!isPresent && noFavicon) {
       getBucketInfo(hostname, buckets).then((permissions) => {
-        permissions && permissions.type === "good" && addNumber(buckets);
+        if (permissions && permissions.type === "good") addNumber(buckets);
       });
     }
   });
@@ -144,11 +146,7 @@ const listener = async () => {
  * @param _sender the sender of the message
  * @param sendResponse the response to send back
  */
-const fromPopup = (
-  toRecord: boolean,
-  _sender: chrome.runtime.MessageSender,
-  _sendResponse: (response?: any) => void,
-) => {
+const fromPopup = (toRecord: boolean) => {
   if (toRecord) {
     listener();
     chrome.action.setBadgeText({

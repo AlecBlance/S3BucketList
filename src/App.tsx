@@ -1,6 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList } from "@/components/ui/tabs";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { IBucketType, ILastSeen } from "./types";
 import TabButton from "@/components/TabButton";
 import TabBuckets from "@/components/TabBuckets";
@@ -18,14 +18,14 @@ function App() {
   const { buckets, setBuckets } = useBuckets((state) => state);
   const types = ["good", "bad", "error"];
 
-  const filterBuckets = async () => {
+  const filterBuckets = useCallback(async () => {
     const { buckets } = (await chrome.storage.local.get("buckets")) as {
       buckets: IBucketType;
     };
     setBuckets(buckets);
-  };
+  }, [setBuckets]);
 
-  const lastSeen = async () => {
+  const lastSeen = useCallback(async () => {
     const { lastSeen } = await chrome.storage.local.get("lastSeen");
     const updatedLastSeen = { ...lastSeen, good: new Date().getTime() };
     chrome.storage.local.set({
@@ -33,12 +33,12 @@ function App() {
     });
     setLastSeen(updatedLastSeen);
     setCurrentLastSeen(lastSeen);
-  };
+  }, [setLastSeen]);
 
   useEffect(() => {
     filterBuckets();
     lastSeen();
-  }, []);
+  }, [filterBuckets, lastSeen]);
 
   return (
     <Tabs defaultValue="good" className="w-full">
