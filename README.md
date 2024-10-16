@@ -6,12 +6,7 @@ Search, lists, and checks S3 Buckets found in network requests while you are bro
 
 ## Installation
 
-1. Download the latest release zip
-2. Extract
-3. Go to Google Chrome's Settings > Tools > Extensions
-4. Enable Developer Mode ( toggle button in top-right corner )
-5. Click "Load unpacked" and locate the extracted zip from step 2
-6. Browse the internet 🎉
+You can install this extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/s3bucketlist/anngjobjhcbancaaogmlcffohpmcniki?authuser=0&hl=en)
 
 ## Features
 
