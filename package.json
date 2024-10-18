@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc -b && vite build",
-    "lint": "eslint . && tsc",
-    "release": "pnpm run build && changeset publish"
+    "lint": "eslint . && tsc"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.0",
