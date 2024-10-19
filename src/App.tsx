@@ -66,7 +66,10 @@ function App() {
           </div>
         </div>
         <Separator />
-        <div className="grow overflow-y-auto">
+        <div
+          className="grow overflow-y-auto"
+          style={{ scrollbarGutter: "stable" }}
+        >
           {types.map((type) => {
             return (
               <TabBuckets
