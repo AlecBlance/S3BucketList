@@ -3,7 +3,7 @@ import { addNumber } from "@/utils/helper.utils";
 import { IBucketType } from "@/types";
 
 const storage = chrome.storage.local;
-//const preRecorded = new Set();
+const preRecord = new Set();
 
 /**
  * Gets the permissions from the offscreen page
@@ -78,20 +78,22 @@ export const recordBuckets = async (
   const s3 = response.responseHeaders?.some(
     (header) => header.name == "x-amz-request-id",
   );
-  if (!s3) return;
-  const { buckets }: { buckets: IBucketType } = await storage.get("buckets");
+  if (!s3 || response.frameId < 0) return;
   const { hostname, pathname } = new URL(response.url);
   // There are instances that the bucket name is a path
   const bucketHostname =
     hostname === "s3.amazonaws.com"
       ? `${hostname}/${pathname.split("/")[1]}`
       : hostname;
+  const hasFavicon = bucketHostname.includes("favicon.ico");
+  if (hasFavicon) return;
+  if (!preRecord.add(bucketHostname)) return;
+  const { buckets }: { buckets: IBucketType } = await storage.get("buckets");
   const isPresent = Object.values(buckets)
     .flat()
     .some((bucket) => bucket.hostname === bucketHostname);
   // Double requests that might be recorded that has favicon.ico
-  const hasFavicon = bucketHostname.includes("favicon.ico");
-  if (isPresent || hasFavicon) return;
+  if (isPresent) return;
   const bucketInfo = await getBucketInfo(bucketHostname);
   if (!bucketInfo) return;
   storage.set({
