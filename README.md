@@ -1,4 +1,4 @@
-# S3BucketList v3.2.0
+# S3BucketList v3.1.0
 
 Search, lists, and checks S3 Buckets found in network requests while you are browsing.
 
