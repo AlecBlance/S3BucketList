@@ -27,13 +27,14 @@ jobs:
       - name: Create Release Pull Request
         id: changesets
         uses: changesets/action@v1
+        with:
+          publish: pnpm build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload assets
         if: steps.changesets.outputs.hasChangesets == 'false'
         run: |
-          version=v${{ steps.changesets.outputs.publishedversions[0].version }}
-          pnpm build
+          version=v${{ steps.changesets.outputs.publishedPackages[0].version }}
           zip -r ${version}.zip .
           gh release upload ${version} ${version}.zip
         env:
