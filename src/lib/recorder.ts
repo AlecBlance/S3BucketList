@@ -102,5 +102,5 @@ export const recordBuckets = async (
       [bucketInfo.type]: [bucketInfo.info, ...buckets[bucketInfo.type]],
     },
   });
-  bucketInfo.type === "good" && addNumber(buckets);
+  if (bucketInfo.type === "good") addNumber(buckets);
 };
