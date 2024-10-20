@@ -34,7 +34,7 @@ jobs:
       - name: Upload assets
         if: steps.changesets.outputs.hasChangesets == 'false'
         run: |
-          version=v${{ steps.changesets.outputs.publishedPackages[0].version }}
+          version=v${{ fromJson(steps.changesets.outputs.publishedPackages)[0].version }}
           zip -r ${version}.zip .
           gh release upload ${version} ${version}.zip
         env:
