@@ -1,3 +1,7 @@
+import { IBucketType } from "@/types";
+
+const storage = chrome.storage.local;
+
 /**
  * This gets the local storage key value or the keys within the local storage key object
  *
@@ -51,4 +55,22 @@ export const editStorageKeyValue = async (
       chrome.storage.local.set(result).then(() => resolve(storageKeyValues));
     }),
   );
+};
+
+/**
+ * Changes the badge text to the number of buckets
+ *
+ * @param buckets list of buckets from the storage
+ */
+export const addNumber = async (buckets: IBucketType) => {
+  const { lastSeen } = await storage.get("lastSeen");
+  // We only care for the good buckets
+  const bucketsListed =
+    buckets.good.filter((bucket) => bucket.date > lastSeen.good).length + 1;
+  chrome.action.setBadgeText({
+    text: bucketsListed.toString(),
+  });
+  chrome.action.setBadgeBackgroundColor({
+    color: "green",
+  });
 };

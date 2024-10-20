@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "S3BucketList",
   "description": "Search, lists, and checks S3 Buckets found in network requests",
-  "version": "3.0.1",
+  "version": "3.2.0",
   "icons": {
     "16": "images/bucket-16.png",
     "32": "images/bucket-32.png",

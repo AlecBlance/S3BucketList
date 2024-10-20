@@ -4,6 +4,7 @@ export interface IBucketInfo {
   permissions: Record<string, string[]>;
   date: number;
   hostname: string;
+  origin: string;
 }
 export type ILastSeen = Record<string, number>;
 

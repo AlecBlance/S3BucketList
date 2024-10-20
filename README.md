@@ -1,4 +1,4 @@
-# S3BucketList v3.0.1
+# S3BucketList v3.2.0
 
 Search, lists, and checks S3 Buckets found in network requests while you are browsing.
 
@@ -17,7 +17,6 @@ You can install this extension from the [Chrome Web Store](https://chromewebstor
 
 ## Roadmap
 
-- Add CI/CD for releases and versioning
 - Add blacklisting
 
 ## Tech Stack
