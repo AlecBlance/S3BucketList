@@ -35,6 +35,7 @@ jobs:
         if: steps.changesets.outputs.hasChangesets == 'false'
         run: |
           version=v${{ fromJson(steps.changesets.outputs.publishedPackages)[0].version }}
+          cd dist
           zip -r ${version}.zip .
           gh release upload ${version} ${version}.zip
         env:
