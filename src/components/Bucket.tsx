@@ -93,7 +93,12 @@ const Bucket = ({
           </div>
         </AccordionTrigger>
         {isPermPresent && (
-          <AccordionContent className="bg-secondary p-2 text-xs">
+          <AccordionContent className="space-y-2 bg-secondary p-2 text-xs">
+            {info.origin && (
+              <p>
+                <b>Origin:</b> {info.origin}
+              </p>
+            )}
             <div className="flex flex-col gap-y-2">
               {Object.entries(info.permissions).map(([key, value]) => (
                 <div key={key} className="flex flex-col gap-y-1">

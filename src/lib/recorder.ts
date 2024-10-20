@@ -17,9 +17,6 @@ const getPerms = ($: cheerio.CheerioAPI, hostname: string) => {
   const hasListBucket = $("ListBucketResult");
   let type = "";
   const date = new Date().getTime();
-  console.log("Date", date);
-  console.log("Hostname", hostname);
-
   try {
     if (!hasUri.length && !hasCode.length && hasListBucket)
       throw new Error("No permissions");
@@ -99,7 +96,10 @@ export const recordBuckets = async (
   storage.set({
     buckets: {
       ...buckets,
-      [bucketInfo.type]: [bucketInfo.info, ...buckets[bucketInfo.type]],
+      [bucketInfo.type]: [
+        { ...bucketInfo.info, origin: response.initiator },
+        ...buckets[bucketInfo.type],
+      ],
     },
   });
   if (bucketInfo.type === "good") addNumber(buckets);
