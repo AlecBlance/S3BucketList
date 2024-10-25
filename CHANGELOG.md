@@ -1,5 +1,11 @@
 # s3bucketlist
 
+## 3.1.1
+
+### Patch Changes
+
+- f6c3eb6: fixes #22 where stored buckets are cleared after some time
+
 ## 3.1.0
 
 ### Minor Changes
