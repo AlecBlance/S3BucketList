@@ -17,7 +17,7 @@ export const getStorageKeyValue = async <T = Record<string, any>>(
     new Promise((resolve) =>
       chrome.storage.local.get(storageKey).then((result) => {
         if (!Object.keys(result).length) return resolve({} as T);
-        if (!keys) return resolve(result[storageKey] as T);
+        if (!keys) return resolve(result as T);
         resolve(
           keys.reduce(
             (accu, key) => ({ ...accu, [key]: result[storageKey][key] }),
