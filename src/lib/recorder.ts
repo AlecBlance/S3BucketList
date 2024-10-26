@@ -17,9 +17,17 @@ const getPerms = ($: cheerio.CheerioAPI, hostname: string) => {
   const hasListBucket = $("ListBucketResult");
   let type = "";
   const date = new Date().getTime();
-  try {
-    if (!hasUri.length && !hasCode.length && hasListBucket)
+  permissionChecks: try {
+    if (!hasUri.length && !hasCode.length && !hasListBucket.length)
       throw new Error("No permissions");
+    if (hasCode.length && !hasUri.length && !hasListBucket.length) {
+      const elem = hasCode[0];
+      const title = $(elem).text();
+      const perm = $(elem).next().text();
+      type = "bad";
+      permissions[title] = [...(permissions[title] || []), perm];
+      break permissionChecks;
+    }
     if (hasUri.length) {
       hasUri.toArray().map((elem) => {
         const title = $(elem).text().split("/").pop()!;
@@ -31,13 +39,6 @@ const getPerms = ($: cheerio.CheerioAPI, hostname: string) => {
     if (hasListBucket.length) {
       permissions["ListBucket"] = ["True"];
       type = "good";
-    }
-    if (hasCode.length && !hasUri.length && !hasListBucket.length) {
-      const elem = hasCode[0];
-      const title = $(elem).text();
-      const perm = $(elem).next().text();
-      type = "bad";
-      permissions[title] = [...(permissions[title] || []), perm];
     }
   } catch (e) {
     type = "error";
