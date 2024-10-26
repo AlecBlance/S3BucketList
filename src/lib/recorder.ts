@@ -27,10 +27,12 @@ const getPerms = ($: cheerio.CheerioAPI, hostname: string) => {
         permissions[title] = [...(permissions[title] || []), perm];
       });
       type = "good";
-    } else if (hasListBucket.length) {
+    }
+    if (hasListBucket.length) {
       permissions["ListBucket"] = ["True"];
       type = "good";
-    } else if (hasCode.length) {
+    }
+    if (hasCode.length && !hasUri.length && !hasListBucket.length) {
       const elem = hasCode[0];
       const title = $(elem).text();
       const perm = $(elem).next().text();
