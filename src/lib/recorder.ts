@@ -27,8 +27,7 @@ const getPerms = ($: cheerio.CheerioAPI, hostname: string) => {
         permissions[title] = [...(permissions[title] || []), perm];
       });
       type = "good";
-    }
-    if (hasListBucket.length) {
+    } else if (hasListBucket.length) {
       permissions["ListBucket"] = ["True"];
       type = "good";
     } else if (hasCode.length) {
