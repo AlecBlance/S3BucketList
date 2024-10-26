@@ -1,5 +1,11 @@
 # s3bucketlist
 
+## 3.1.2
+
+### Patch Changes
+
+- dd7c318: fixed improper categorization of buckets
+
 ## 3.1.1
 
 ### Patch Changes
