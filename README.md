@@ -2,8 +2,13 @@
 
 | WIP v4.0.0
 
-### Changelog
+### Todo
 
-- Enhanced S3 bucket detection
-- Better filtering of buckets
-- Accurate permission extraction
+- [x] Enhanced S3 bucket detection
+- [x] Better filtering of buckets
+- [x] Accurate permission extraction
+- [ ] tab-only bucket listeners
+- [ ] Exclusions
+- [ ] View full URL request
+- [ ] Better UI / UX
+- [ ] Authenticated AWS checking
