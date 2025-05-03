@@ -1,0 +1,40 @@
+{
+  "name": "s3bucketlist",
+  "description": "S3BucketList automatically scans network requests made by your browser to detect Amazon S3 bucket URLs",
+  "private": true,
+  "version": "4.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "compile": "tsc --noEmit",
+    "postinstall": "wxt prepare"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.4",
+    "@tanstack/react-table": "^8.21.3",
+    "axios": "^1.9.0",
+    "cheerio": "^1.0.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.503.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tailwind-merge": "^3.2.0",
+    "tailwindcss": "^4.1.4",
+    "tw-animate-css": "^1.2.8",
+    "webext-bridge": "^6.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.2",
+    "@wxt-dev/module-react": "^1.1.3",
+    "typescript": "^5.8.3",
+    "wxt": "^0.20.0"
+  }
+}

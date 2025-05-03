@@ -1,0 +1,79 @@
+import axios from "axios";
+import { IBucket, IPermissions } from "@/@types";
+import { CheerioAPI, load } from "cheerio";
+
+/**
+ * Get all possible information about a bucket
+ */
+export const getBucketInfo = async (bucketName: string): Promise<IBucket> => {
+  const [listBucketReq, aclReq] = await Promise.allSettled([
+    hasListBucketPermission(bucketName),
+    axios.get(`https://${bucketName}/?acl`),
+  ]);
+  const listBucket =
+    listBucketReq.status === "fulfilled" ? listBucketReq.value : undefined;
+  const acl = aclReq.status === "fulfilled" ? aclReq.value : undefined;
+  const $ = acl ? load(acl.data) : undefined;
+  const owner = $?.("Owner")?.text();
+  const aclPermissions = $ ? getACLPermissions($) : undefined;
+  const permissions = { ...listBucket, ...aclPermissions };
+  return {
+    public:
+      !!aclPermissions?.AllUsers?.length ||
+      !!aclPermissions?.AuthenticatedUsers?.length ||
+      !!listBucket?.ListBucket,
+    date: Date.now(),
+    hostname: bucketName,
+    owner,
+    permissions,
+  };
+};
+
+/**
+ * Check if the bucket contents can be listed
+ */
+async function hasListBucketPermission(
+  bucketName: string
+): Promise<{ ListBucket?: boolean }> {
+  const url = `https://${bucketName}`;
+  try {
+    const response = await axios.get(url);
+    const $ = load(response.data);
+    const hasListBucket = $("ListBucketResult");
+    return {
+      ListBucket: hasListBucket.length > 0,
+    };
+  } catch (error) {
+    throw new Error("Failed to fetch list bucket permissions");
+  }
+}
+
+/**
+ * Get public ACL permissions
+ */
+function getACLPermissions($: CheerioAPI): Omit<IPermissions, "ListBucket"> {
+  const acl: Omit<IPermissions, "ListBucket"> = {
+    AllUsers: [],
+    AuthenticatedUsers: [],
+  };
+  try {
+    const hasUri = $("URI");
+    hasUri.toArray().map((elem) => {
+      // Get last path segment (e.g. "AllUsers" or "AuthenticatedUsers")
+      const title = $(elem).text().split("/").pop()!;
+      // Get Permission attached to that path segment
+      const perm = $(elem).parent().next().text();
+      switch (title) {
+        case "AllUsers":
+          acl.AllUsers = [...(acl.AllUsers || []), perm];
+          break;
+        case "AuthenticatedUsers":
+          acl.AuthenticatedUsers = [...(acl.AuthenticatedUsers || []), perm];
+          break;
+      }
+    });
+    return acl;
+  } catch (error) {
+    throw new Error("Failed to fetch acl permissions");
+  }
+}
