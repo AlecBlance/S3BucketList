@@ -7,6 +7,7 @@
 - [x] Enhanced S3 bucket detection
 - [x] Better filtering of buckets
 - [x] Accurate permission extraction
+- [x] S3 Bucket Takeover detection
 - [ ] tab-only bucket listeners
 - [ ] Exclusions
 - [ ] View full URL request

@@ -4,6 +4,7 @@ import { CheerioAPI, load } from "cheerio";
 
 /**
  * Get all possible information about a bucket
+ * ! This needs to be refactored for better readability
  */
 export const getBucketInfo = async (bucketName: string): Promise<IBucket> => {
   const [listBucketReq, aclReq] = await Promise.allSettled([
@@ -11,20 +12,27 @@ export const getBucketInfo = async (bucketName: string): Promise<IBucket> => {
     axios.get(`https://${bucketName}/?acl`),
   ]);
   const listBucket =
-    listBucketReq.status === "fulfilled" ? listBucketReq.value : undefined;
+    listBucketReq.status === "fulfilled" ? listBucketReq.value : {};
   const acl = aclReq.status === "fulfilled" ? aclReq.value : undefined;
+
   const $ = acl ? load(acl.data) : undefined;
-  const owner = $?.("Owner")?.text();
+  const owned = aclReq.status !== "rejected" || aclReq.reason.status !== 404;
   const aclPermissions = $ ? getACLPermissions($) : undefined;
-  const permissions = { ...listBucket, ...aclPermissions };
+  const permissions: IPermissions = {
+    ...listBucket,
+    ...aclPermissions,
+  };
+
   return {
     public:
       !!aclPermissions?.AllUsers?.length ||
       !!aclPermissions?.AuthenticatedUsers?.length ||
-      !!listBucket?.ListBucket,
+      !!listBucket?.ListBucket ||
+      !owned,
     date: Date.now(),
     hostname: bucketName,
-    owner,
+    owner: $?.("Owner")?.text(),
+    owned,
     permissions,
   };
 };
