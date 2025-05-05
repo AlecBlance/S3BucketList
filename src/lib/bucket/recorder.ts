@@ -12,7 +12,10 @@ export const bucketRecorder = async (
   const bucketUrl = cleanBucketUrl(hostname, pathname);
   const bucketInfo = await getBucketInfo(bucketUrl);
   console.log("Bucket name", bucketUrl);
-  console.log("Bucket permissions", bucketInfo);
+  console.log("Bucket permissions", {
+    ...bucketInfo,
+    initiator: request.initiator, //where the request came from
+  });
 };
 
 /**

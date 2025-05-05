@@ -7,6 +7,7 @@ export interface IBucket {
   claimed?: boolean;
   permissions?: IPermissions;
   public: boolean;
+  initiator: string;
 }
 
 export interface IPermissions {

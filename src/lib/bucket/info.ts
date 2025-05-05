@@ -6,7 +6,9 @@ import { CheerioAPI, load } from "cheerio";
  * Get all possible information about a bucket
  * ! This needs to be refactored for better readability
  */
-export const getBucketInfo = async (bucketName: string): Promise<IBucket> => {
+export const getBucketInfo = async (
+  bucketName: string
+): Promise<Omit<IBucket, "initiator">> => {
   const [listBucketReq, aclReq] = await Promise.allSettled([
     hasListBucketPermission(bucketName),
     axios.get(`https://${bucketName}/?acl`),
