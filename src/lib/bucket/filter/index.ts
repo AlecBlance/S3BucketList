@@ -4,6 +4,7 @@
 export const isReqBucket = (
   request: Browser.webRequest.WebResponseHeadersDetails
 ): boolean => {
+  console.log("request", request);
   console.log("Checking request", request.url);
   return (
     !isExtensionRequest(request) &&
@@ -15,10 +16,12 @@ export const isReqBucket = (
 /**
  * Filters out favicon requests
  */
-function hasFavicon(
+export function hasFavicon(
   request: Browser.webRequest.WebResponseHeadersDetails
 ): boolean {
-  const hasFavicon = new URL(request.url).hostname.includes("favicon.ico");
+  const { hostname, pathname } = new URL(request.url);
+  const hasFavicon =
+    hostname === "s3.amazonaws.com" && pathname.startsWith("/favicon.ico");
   console.log("- Does it have favicon", hasFavicon);
   return hasFavicon;
 }
@@ -27,7 +30,7 @@ function hasFavicon(
  * This is a workaround to filter out S3BucketList requests that tries to extract the s3 bucket's permissions
  * ? Can we add a query parameter to the request to identify it instead?
  */
-function isExtensionRequest(
+export function isExtensionRequest(
   request: Browser.webRequest.WebResponseHeadersDetails
 ): boolean {
   const extensionUrls = ["chrome-extension://", "moz-extension://"];
@@ -41,7 +44,7 @@ function isExtensionRequest(
 /**
  * Checks if the request header has amazon headers
  */
-function hasAmazonHeader(
+export function hasAmazonHeader(
   request: Browser.webRequest.WebResponseHeadersDetails
 ): boolean {
   const amazonHeaders = [
