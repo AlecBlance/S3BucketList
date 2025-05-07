@@ -42,7 +42,7 @@ export const getBucketInfo = async (
 /**
  * Check if the bucket contents can be listed
  */
-async function hasListBucketPermission(
+export async function hasListBucketPermission(
   bucketName: string
 ): Promise<{ ListBucket?: boolean }> {
   const url = `https://${bucketName}`;
@@ -50,9 +50,7 @@ async function hasListBucketPermission(
     const response = await axios.get(url);
     const $ = load(response.data);
     const hasListBucket = $("ListBucketResult");
-    return {
-      ListBucket: hasListBucket.length > 0,
-    };
+    return hasListBucket.length > 0 ? { ListBucket: true } : {};
   } catch (error) {
     throw new Error("Failed to fetch list bucket permissions");
   }
@@ -61,7 +59,9 @@ async function hasListBucketPermission(
 /**
  * Get public ACL permissions
  */
-function getACLPermissions($: CheerioAPI): Omit<IPermissions, "ListBucket"> {
+export function getACLPermissions(
+  $: CheerioAPI
+): Omit<IPermissions, "ListBucket"> {
   const acl: Omit<IPermissions, "ListBucket"> = {
     AllUsers: [],
     AuthenticatedUsers: [],

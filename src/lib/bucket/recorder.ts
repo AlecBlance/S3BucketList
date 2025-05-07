@@ -22,8 +22,8 @@ export const bucketRecorder = async (
  * Cleans the url. Making sure it has this format: {bucketName}.s3.amazonaws.com or the original hostname
  * There are instances where the bucket name is a pathname
  */
-const cleanBucketUrl = (hostname: string, pathname: string): string => {
+export const cleanBucketUrl = (hostname: string, pathname: string): string => {
   return hostname === "s3.amazonaws.com"
-    ? `${hostname}/${pathname.split("/")[1]}`
+    ? `${pathname.split("/")[1]}.${hostname}`
     : hostname;
 };

@@ -1,7 +1,9 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { hasFavicon } from "./index";
+export { s3Request, extensionRequest, faviconRequest, missingHeaderRequest };
 
-const request: Browser.webRequest.WebResponseHeadersDetails = {
+/**
+ * Simulates Valid S3 Request
+ */
+const s3Request: Browser.webRequest.WebResponseHeadersDetails = {
   frameId: 0,
   initiator: "https://sample.s3.amazonaws.com",
   method: "GET",
@@ -42,14 +44,25 @@ const request: Browser.webRequest.WebResponseHeadersDetails = {
   url: "https://sample.s3.amazonaws.com",
 };
 
-describe("filter", () => {
-  beforeEach(() => {
-    fakeBrowser.reset();
-  });
+/**
+ * Simulates Extension Request (which is not a valid S3 request)
+ */
+const extensionRequest = {
+  ...s3Request,
+  tabId: -1,
+};
 
-  it("should detect if request has favicon.ico", () => {
-    const newReq = { ...request, url: "https://s3.amazonaws.com/favicon.ico" };
-    expect(hasFavicon(newReq)).toBe(true);
-    expect(hasFavicon(request)).toBe(false);
-  });
-});
+const faviconRequest = {
+  ...s3Request,
+  url: "https://s3.amazonaws.com/favicon.ico",
+};
+
+const missingHeaderRequest = {
+  ...s3Request,
+  responseHeaders: [
+    {
+      name: "asdasd",
+      value: "3NB8AMWX361",
+    },
+  ],
+};
