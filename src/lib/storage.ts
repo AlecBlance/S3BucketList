@@ -1,5 +1,5 @@
 import { IBucket } from "@/@types";
 
-export const buckets = storage.defineItem<Partial<IBucket[]>>("local:buckets", {
+export const buckets = storage.defineItem<IBucket[]>("local:buckets", {
   fallback: [],
 });

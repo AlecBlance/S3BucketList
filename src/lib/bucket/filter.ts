@@ -61,10 +61,7 @@ export function hasAmazonHeader(
       return amazonHeaders.includes(lowerCaseHeader) || isAmazonServer;
     })
   );
-  console.log(
-    `${hasAmazonHeader ? "\x1b[43m" : ""}- Does it have amazon headers`,
-    hasAmazonHeader
-  );
+  console.log(hasAmazonHeader);
 
   return hasAmazonHeader;
 }

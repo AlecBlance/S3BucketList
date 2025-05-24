@@ -20,6 +20,7 @@ describe("bucket info", () => {
 
   it("should be able to extract bucket information", async () => {
     const bucketInfo = await getBucketInfo("flaws.cloud.s3.amazonaws.com");
+    console.log("bucketInfo", bucketInfo);
     expect(bucketInfo).toMatchObject({
       public: true,
       hostname: "flaws.cloud.s3.amazonaws.com",

@@ -22,7 +22,7 @@ export default defineBackground({
       if (data) {
         console.log("Recording started");
         interceptedRequests.addListener(
-          proxyBucketRecorder,
+          proxyBucketRecorder, // Handles bucket recording
           { urls: ["<all_urls>"] },
           ["responseHeaders"]
         );

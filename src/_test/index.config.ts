@@ -1,4 +1,10 @@
-export { s3Request, extensionRequest, faviconRequest, missingHeaderRequest };
+export {
+  s3Request,
+  extensionRequest,
+  faviconRequest,
+  missingHeaderRequest,
+  fakeIBucketInfo,
+};
 
 /**
  * Simulates Valid S3 Request
@@ -65,4 +71,20 @@ const missingHeaderRequest = {
       value: "3NB8AMWX361",
     },
   ],
+};
+
+const fakeIBucketInfo = {
+  date: 123123,
+  hostname: "example-bucket.s3.amazonaws.com",
+  origin: "us-east-1",
+  owner: "user123",
+  owned: true,
+  claimed: true,
+  permissions: {
+    AllUsers: ["read", "write"],
+    AuthenticatedUsers: ["read"],
+    ListBucket: true,
+  },
+  public: false,
+  initiator: "admin",
 };
