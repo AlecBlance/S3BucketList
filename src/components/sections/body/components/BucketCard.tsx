@@ -1,0 +1,78 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FaEllipsisVertical } from "react-icons/fa6";
+import { Badge } from "@/components/ui/badge";
+import { IBucket } from "@/@types";
+import { permission } from "process";
+
+type BucketCardProps = Pick<
+  IBucket,
+  "hostname" | "initiator" | "permissions" | "date"
+>;
+
+const BucketCard = ({
+  hostname,
+  initiator,
+  permissions,
+  date,
+}: BucketCardProps) => {
+  const formattedPermissions: Record<string, string> = {
+    READ: "R",
+    READ_ACP: "RA",
+    WRITE: "W",
+    WRITE_ACP: "WA",
+    FULL_CONTROL: "F",
+  };
+
+  const labelMap: Record<string, string> = {
+    AllUsers: "All",
+    AuthenticatedUsers: "Auth",
+    LogDelivery: "Log",
+  };
+
+  return (
+    <div>
+      <Card className="hover:bg-accent flex cursor-pointer flex-row items-start gap-0 py-4 transition-all duration-300 ease-in-out">
+        <div className="grow">
+          <CardHeader className="flex items-center justify-between px-4">
+            <CardTitle className="flex space-x-2 truncate text-sm">
+              <Badge>New</Badge>
+              <p className="truncate">{hostname}</p>{" "}
+            </CardTitle>
+            <div className="flex items-center space-x-4 px-4 pr-0">
+              <FaEllipsisVertical />
+            </div>
+          </CardHeader>
+          <CardContent className="px-4">
+            <p>
+              <b className="text-primary">From:</b> {initiator}
+            </p>
+
+            <div className="grid grid-cols-3">
+              {["AllUsers", "AuthenticatedUsers", "LogDelivery"].map((key) => {
+                const perms = permissions[key as keyof typeof permissions];
+                return (
+                  Array.isArray(perms) &&
+                  perms.length > 0 && (
+                    <p className="space-x-1" key={key}>
+                      <b className="text-primary">{labelMap[key]}:</b>
+                      {perms.map((perm: string) => (
+                        <span key={perm}>{formattedPermissions[perm]}</span>
+                      ))}
+                    </p>
+                  )
+                );
+              })}
+              {permissions.ListBucket && (
+                <p>
+                  <b className="text-primary">ListBucket:</b> true
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </div>
+      </Card>
+    </div>
+  );
+};
+
+export default BucketCard;

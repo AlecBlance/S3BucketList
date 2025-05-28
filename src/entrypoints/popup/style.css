@@ -154,6 +154,28 @@
   }
 }
 
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  @apply bg-secondary;
+  border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  @apply bg-primary;
+  border-radius: 5px;
+}
+
+/* Handle on hover
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+} */
+
 html,
 body {
   overflow: hidden;

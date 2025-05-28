@@ -1,11 +1,11 @@
 export interface IBucket {
-  date?: number;
-  hostname?: string;
+  date: number;
+  hostname: string;
   origin?: string;
   owner?: string | undefined;
   owned?: boolean;
   claimed?: boolean;
-  permissions?: IPermissions;
+  permissions: IPermissions;
   public: boolean;
   initiator?: string;
 }
@@ -13,5 +13,6 @@ export interface IBucket {
 export interface IPermissions {
   AllUsers?: string[];
   AuthenticatedUsers?: string[];
+  LogDelivery?: string[];
   ListBucket?: boolean;
 }

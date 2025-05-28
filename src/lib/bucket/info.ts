@@ -7,7 +7,7 @@ import { CheerioAPI, load } from "cheerio";
  * ! This needs to be refactored for better readability
  */
 export const getBucketInfo = async (
-  bucketName: string
+  bucketName: string,
 ): Promise<Omit<IBucket, "initiator">> => {
   const [listBucketReq, aclReq] = await Promise.allSettled([
     hasListBucketPermission(bucketName),
@@ -43,7 +43,7 @@ export const getBucketInfo = async (
  * Check if the bucket contents can be listed
  */
 export async function hasListBucketPermission(
-  bucketName: string
+  bucketName: string,
 ): Promise<{ ListBucket?: boolean }> {
   const url = `https://${bucketName}`;
   try {
@@ -60,11 +60,12 @@ export async function hasListBucketPermission(
  * Get public ACL permissions
  */
 export function getACLPermissions(
-  $: CheerioAPI
+  $: CheerioAPI,
 ): Omit<IPermissions, "ListBucket"> {
   const acl: Omit<IPermissions, "ListBucket"> = {
     AllUsers: [],
     AuthenticatedUsers: [],
+    LogDelivery: [],
   };
   try {
     const hasUri = $("URI");
@@ -73,13 +74,10 @@ export function getACLPermissions(
       const title = $(elem).text().split("/").pop()!;
       // Get Permission attached to that path segment
       const perm = $(elem).parent().next().text();
-      switch (title) {
-        case "AllUsers":
-          acl.AllUsers = [...(acl.AllUsers || []), perm];
-          break;
-        case "AuthenticatedUsers":
-          acl.AuthenticatedUsers = [...(acl.AuthenticatedUsers || []), perm];
-          break;
+      if (title in acl) {
+        // acl.AuthenticatedUsers = [...(acl.AuthenticatedUsers || []), perm];
+        const key = title as keyof typeof acl;
+        acl[key] = [...(acl[key] || []), perm];
       }
     });
     return acl;
