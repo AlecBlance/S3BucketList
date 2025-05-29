@@ -1,15 +1,13 @@
-import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Buckets from "./components/Buckets";
+import Search from "./components/Search";
 
 const Body = () => {
   const tabs = ["public", "private"];
 
   return (
     <div className="flex min-h-0 grow flex-col space-y-4 p-4">
-      <div>
-        <Input placeholder="Search" className="text-sm" />
-      </div>
+      <Search />
       <Tabs defaultValue="public" className="flex min-h-0 w-full grow flex-col">
         <TabsList className="w-full bg-transparent p-0">
           {tabs.map((tab) => (

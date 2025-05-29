@@ -33,7 +33,8 @@
     "tailwind-merge": "^3.2.0",
     "tailwindcss": "^4.1.4",
     "tw-animate-css": "^1.2.8",
-    "webext-bridge": "^6.0.1"
+    "webext-bridge": "^6.0.1",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@types/node": "^22.15.3",
