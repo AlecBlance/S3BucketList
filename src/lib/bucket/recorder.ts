@@ -1,13 +1,14 @@
 import { IBucket } from "@/@types";
 import { isReqBucket, getBucketInfo } from "@/lib/bucket";
-import { buckets } from "@/lib/storage";
+import { bucketsStorage } from "@/lib/storage";
+import { logger } from "../logger";
 
 /**
  * Handles the checking of the request to see if it is an S3 bucket request
  * and if so, it retrieves the bucketname and permissions
  */
 export const bucketRecorder = async (
-  request: Browser.webRequest.WebResponseHeadersDetails
+  request: Browser.webRequest.WebResponseHeadersDetails,
 ) => {
   if (!isReqBucket(request)) return;
   const { hostname, pathname } = new URL(request.url);
@@ -33,15 +34,15 @@ export const cleanBucketUrl = (hostname: string, pathname: string): string => {
  * Adds bucket information to the storage
  */
 export const addToBucketStorage = async (
-  bucketInfo: IBucket
+  bucketInfo: IBucket,
 ): Promise<void> => {
-  const bucketsList = await buckets.getValue();
+  const bucketsList = await bucketsStorage.getValue();
   const isRecorded = bucketsList.some(
-    (bucket) => bucket.hostname === bucketInfo.hostname
+    (bucket) => bucket.hostname === bucketInfo.hostname,
   );
   if (isRecorded) return;
 
   bucketsList.push(bucketInfo);
-  buckets.setValue(bucketsList);
-  console.log("Bucket added to storage", bucketInfo);
+  bucketsStorage.setValue(bucketsList);
+  logger("Bucket added to storage", bucketInfo);
 };

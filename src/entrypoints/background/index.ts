@@ -1,10 +1,17 @@
 import { onMessage } from "webext-bridge/background";
 import { bucketRecorder } from "@/lib/bucket";
+import { logger } from "@/lib/logger";
 
 export default defineBackground({
   persistent: true,
   main: () => {
-    console.log("Background script loaded");
+    const proxyBucketRecorder = (
+      request: Browser.webRequest.WebResponseHeadersDetails,
+    ) => {
+      bucketRecorder(request);
+    };
+
+    logger("Background script loaded");
     const interceptedRequests = browser.webRequest.onHeadersReceived;
     setToRecord({ data: true });
 
@@ -13,21 +20,16 @@ export default defineBackground({
 
     function setToRecord({ data }: { data: boolean }): void {
       // * Required since onHeadersReceived listener won't accept async function
-      const proxyBucketRecorder = (
-        request: Browser.webRequest.WebResponseHeadersDetails
-      ) => {
-        bucketRecorder(request);
-      };
 
       if (data) {
-        console.log("Recording started");
+        logger("Recording started");
         interceptedRequests.addListener(
           proxyBucketRecorder, // Handles bucket recording
           { urls: ["<all_urls>"] },
-          ["responseHeaders"]
+          ["responseHeaders"],
         );
       } else {
-        console.log("Recording stopped");
+        logger("Recording stopped");
         interceptedRequests.removeListener(proxyBucketRecorder);
       }
     }

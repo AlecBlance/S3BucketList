@@ -3,13 +3,13 @@
 import { IBucket } from "@/@types";
 import BucketCard from "./BucketCard";
 import { useQuery } from "@tanstack/react-query";
-import { buckets } from "@/lib/storage";
+import { bucketsStorage } from "@/lib/storage";
 import useSearch from "@/lib/store/useSearch.store";
 
 const Buckets = ({ tab }: { tab: string }) => {
   const { data = [] } = useQuery({
     queryKey: ["buckets"],
-    queryFn: () => buckets.getValue(),
+    queryFn: () => bucketsStorage.getValue(),
   });
 
   const filteredBuckets = data

@@ -1,11 +1,12 @@
+import { logger } from "../logger";
+
 /**
  * Checks if the request is an S3 bucket request
  */
 export const isReqBucket = (
-  request: Browser.webRequest.WebResponseHeadersDetails
+  request: Browser.webRequest.WebResponseHeadersDetails,
 ): boolean => {
-  console.log("request", request);
-  console.log("Checking request", request.url);
+  logger("Checking request", request.url);
   return (
     !isExtensionRequest(request) &&
     !hasFavicon(request) &&
@@ -17,12 +18,12 @@ export const isReqBucket = (
  * Filters out favicon requests
  */
 export function hasFavicon(
-  request: Browser.webRequest.WebResponseHeadersDetails
+  request: Browser.webRequest.WebResponseHeadersDetails,
 ): boolean {
   const { hostname, pathname } = new URL(request.url);
   const hasFavicon =
     hostname === "s3.amazonaws.com" && pathname.startsWith("/favicon.ico");
-  console.log("- Does it have favicon", hasFavicon);
+  logger("- Does it have favicon", hasFavicon);
   return hasFavicon;
 }
 
@@ -31,13 +32,13 @@ export function hasFavicon(
  * ? Can we add a query parameter to the request to identify it instead?
  */
 export function isExtensionRequest(
-  request: Browser.webRequest.WebResponseHeadersDetails
+  request: Browser.webRequest.WebResponseHeadersDetails,
 ): boolean {
   const extensionUrls = ["chrome-extension://", "moz-extension://"];
   const isExtensionRequest =
     extensionUrls.some((url) => request.url?.includes(url)) ||
     request.tabId === -1;
-  console.log("- Is it coming from extension", isExtensionRequest);
+  logger("- Is it coming from extension", isExtensionRequest);
   return isExtensionRequest;
 }
 
@@ -45,7 +46,7 @@ export function isExtensionRequest(
  * Checks if the request header has amazon headers
  */
 export function hasAmazonHeader(
-  request: Browser.webRequest.WebResponseHeadersDetails
+  request: Browser.webRequest.WebResponseHeadersDetails,
 ): boolean {
   const amazonHeaders = [
     "x-amz-request-id",
@@ -59,9 +60,9 @@ export function hasAmazonHeader(
         lowerCaseHeader === "server" &&
         header.value?.toLowerCase() === "amazons3";
       return amazonHeaders.includes(lowerCaseHeader) || isAmazonServer;
-    })
+    }),
   );
-  console.log(hasAmazonHeader);
+  logger("- Has amazon header?", hasAmazonHeader);
 
   return hasAmazonHeader;
 }
