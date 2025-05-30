@@ -1,8 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FaEllipsisVertical } from "react-icons/fa6";
 import { Badge } from "@/components/ui/badge";
 import { IBucket } from "@/@types";
-import { permission } from "process";
+import OptionsDropdown from "./OptionsDropdown";
 
 type BucketCardProps = Pick<
   IBucket,
@@ -38,9 +37,7 @@ const BucketCard = ({
               <Badge>New</Badge>
               <p className="truncate">{hostname}</p>{" "}
             </CardTitle>
-            <div className="flex items-center space-x-4 px-4 pr-0">
-              <FaEllipsisVertical />
-            </div>
+            <OptionsDropdown hostname={hostname} />
           </CardHeader>
           <CardContent className="px-4">
             <p>

@@ -1,26 +1,11 @@
 "use client";
 
 import { IBucket } from "@/@types";
-import BucketCard from "./BucketCard";
-import { useQuery } from "@tanstack/react-query";
-import { bucketsStorage } from "@/lib/storage";
+import BucketCard from "./BucketCard/BucketCard";
 import useSearch from "@/lib/store/useSearch.store";
+import useBucket from "@/lib/store/useBucket.store";
 
-const Buckets = ({ tab }: { tab: string }) => {
-  const { data = [] } = useQuery({
-    queryKey: ["buckets"],
-    queryFn: () => bucketsStorage.getValue(),
-  });
-
-  const filteredBuckets = data
-    .filter((bucket) => bucket.public === (tab === "public"))
-    .reverse();
-
-  return <FilteredBucket buckets={filteredBuckets} />;
-};
-
-// Another component just for searching to avoid any async storage calls again.
-function FilteredBucket({ buckets }: { buckets: IBucket[] }) {
+const Buckets = ({ buckets }: { buckets: IBucket[] }) => {
   const { query } = useSearch((state) => state);
 
   buckets = buckets.filter(
@@ -37,6 +22,6 @@ function FilteredBucket({ buckets }: { buckets: IBucket[] }) {
       key={bucket.hostname}
     />
   ));
-}
+};
 
 export default Buckets;
