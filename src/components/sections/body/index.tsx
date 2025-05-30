@@ -28,7 +28,7 @@ const Body = () => {
           {tabs.map((tab) => (
             <TabsTrigger
               value={tab}
-              className="data-[state=active]:!bg-primary"
+              className="data-[state=active]:!bg-primary data-[state=inactive]:!bg-secondary first:rounded-r-none last:rounded-l-none"
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </TabsTrigger>
