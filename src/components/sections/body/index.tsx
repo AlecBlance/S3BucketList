@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Buckets from "./components/Buckets";
+import BucketList from "./components/BucketList/BucketList";
 import Search from "./components/Search";
 import useBucket from "@/lib/store/useBucket.store";
 
@@ -28,9 +28,9 @@ const Body = () => {
           return (
             <TabsContent
               value={tab}
-              className="mt-2 flex min-h-0 grow flex-col space-y-4 overflow-y-auto pr-2"
+              className="mt-2 flex min-h-0 grow flex-col space-y-4"
             >
-              <Buckets buckets={filteredBuckets} />
+              <BucketList buckets={filteredBuckets} />
             </TabsContent>
           );
         })}
