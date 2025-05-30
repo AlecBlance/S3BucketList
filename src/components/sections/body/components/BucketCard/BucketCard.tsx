@@ -31,7 +31,7 @@ const BucketCard = ({
   return (
     <div>
       <Card className="hover:bg-accent flex cursor-pointer flex-row items-start gap-0 py-4 transition-all duration-300 ease-in-out">
-        <div className="grow">
+        <div className="grow space-y-2">
           <CardHeader className="flex items-center justify-between px-4">
             <CardTitle className="flex space-x-2 truncate text-sm">
               <Badge>New</Badge>
@@ -40,9 +40,11 @@ const BucketCard = ({
             <OptionsDropdown hostname={hostname} />
           </CardHeader>
           <CardContent className="px-4">
-            <p>
-              <b className="text-primary">From:</b> {initiator}
-            </p>
+            {initiator && (
+              <p>
+                <b className="text-primary">From:</b> {initiator}
+              </p>
+            )}
 
             <div className="grid grid-cols-3">
               {["AllUsers", "AuthenticatedUsers", "LogDelivery"].map((key) => {
