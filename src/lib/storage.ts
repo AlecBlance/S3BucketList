@@ -10,3 +10,7 @@ export const isRecordingStorage = storage.defineItem<boolean>(
     fallback: true,
   },
 );
+
+export const lastSeenStorage = storage.defineItem<number>("local:lastSeen", {
+  fallback: 0,
+});

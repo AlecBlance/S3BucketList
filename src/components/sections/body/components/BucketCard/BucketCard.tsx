@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { IBucket } from "@/@types";
 import OptionsDropdown from "./OptionsDropdown";
+import useLastSeen from "@/lib/store/useLastSeen.store";
 
 type BucketCardProps = Pick<
   IBucket,
@@ -14,6 +15,8 @@ const BucketCard = ({
   permissions,
   date,
 }: BucketCardProps) => {
+  const { lastSeen } = useLastSeen((state) => state);
+
   const formattedPermissions: Record<string, string> = {
     READ: "R",
     READ_ACP: "RA",
@@ -34,7 +37,7 @@ const BucketCard = ({
         <div className="grow space-y-2">
           <CardHeader className="flex items-center justify-between px-4">
             <CardTitle className="flex space-x-2 truncate text-sm">
-              <Badge>New</Badge>
+              {lastSeen < date && <Badge>New</Badge>}
               <p className="truncate">{hostname}</p>{" "}
             </CardTitle>
             <OptionsDropdown hostname={hostname} />
