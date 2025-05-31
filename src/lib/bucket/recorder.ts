@@ -2,6 +2,7 @@ import { IBucket } from "@/@types";
 import { isReqBucket, getBucketInfo } from "@/lib/bucket";
 import { bucketsStorage } from "@/lib/storage";
 import { logger } from "../logger";
+import { addBadgeNumber } from "./badge";
 
 /**
  * Handles the checking of the request to see if it is an S3 bucket request
@@ -41,8 +42,8 @@ export const addToBucketStorage = async (
     (bucket) => bucket.hostname === bucketInfo.hostname,
   );
   if (isRecorded) return;
-
   bucketsList.push(bucketInfo);
   bucketsStorage.setValue(bucketsList);
+  addBadgeNumber(bucketsList);
   logger("Bucket added to storage", bucketInfo);
 };

@@ -4,14 +4,13 @@ import { useState } from "react";
 import { sendMessage } from "webext-bridge/popup";
 import { isRecordingStorage } from "@/lib/storage";
 import { useQuery } from "@tanstack/react-query";
+import { stopRecordingBadge } from "@/lib/bucket/badge";
+import useRecording from "@/lib/store/useRecording.store";
 
 const CustomSwitch = () => {
-  const { data: isRecording, isLoading } = useQuery({
-    queryKey: ["isRecording"],
-    queryFn: () => isRecordingStorage.getValue(),
-  });
-
-  const [isRecordingState, setIsRecordingState] = useState(isRecording);
+  const { recording, setRecording, recordingLoading } = useRecording(
+    (state) => state,
+  );
 
   const setToRecord = async (data: boolean) => {
     try {
@@ -23,21 +22,22 @@ const CustomSwitch = () => {
     }
   };
 
-  useEffect(() => {
-    setIsRecordingState(isRecording);
-  }, [isRecording]);
-
-  if (isLoading) {
+  if (recordingLoading) {
     return null;
   }
 
   return (
     <Switch
       id="airplane-mode"
-      checked={isRecordingState}
+      checked={recording}
       onCheckedChange={() => {
-        setIsRecordingState(!isRecordingState);
-        setToRecord(!isRecordingState);
+        setRecording(!recording);
+        setToRecord(!recording);
+        if (!recording === false) {
+          stopRecordingBadge();
+        } else {
+          browser.action.setBadgeText({ text: "" });
+        }
       }}
     />
   );
