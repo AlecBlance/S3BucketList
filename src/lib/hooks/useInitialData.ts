@@ -15,6 +15,7 @@ const useInitialData = () => {
     queryFn: async () => {
       const buckets = await bucketsStorage.getValue();
       setBuckets(buckets);
+      return null;
     },
   });
 
@@ -27,6 +28,7 @@ const useInitialData = () => {
       const lastSeen = await lastSeenStorage.getValue();
       lastSeenStorage.setValue(Date.now());
       setLastSeen(lastSeen);
+      return null;
     },
   });
 };
