@@ -17,13 +17,13 @@ const BucketCard = ({
 }: BucketCardProps) => {
   const { lastSeen } = useLastSeen((state) => state);
 
-  const formattedPermissions: Record<string, string> = {
-    READ: "R",
-    READ_ACP: "RA",
-    WRITE: "W",
-    WRITE_ACP: "WA",
-    FULL_CONTROL: "F",
-  };
+  // const formattedPermissions: Record<string, string> = {
+  //   READ: "R",
+  //   READ_ACP: "RA",
+  //   WRITE: "W",
+  //   WRITE_ACP: "WA",
+  //   FULL_CONTROL: "F",
+  // };
 
   const labelMap: Record<string, string> = {
     AllUsers: "All",
@@ -49,7 +49,7 @@ const BucketCard = ({
               </p>
             )}
 
-            <div className="grid grid-cols-3">
+            <div className="flex flex-wrap gap-x-2">
               {["AllUsers", "AuthenticatedUsers", "LogDelivery"].map((key) => {
                 const perms = permissions[key as keyof typeof permissions];
                 return (
@@ -58,7 +58,7 @@ const BucketCard = ({
                     <p className="space-x-1" key={key}>
                       <b className="text-primary">{labelMap[key]}:</b>
                       {perms.map((perm: string) => (
-                        <span key={perm}>{formattedPermissions[perm]}</span>
+                        <span key={perm}>{perm}</span>
                       ))}
                     </p>
                   )
