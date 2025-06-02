@@ -1,11 +1,10 @@
 import { CiSettings } from "react-icons/ci";
+import Settings from "./Settings/Settings";
 
 const Footer = () => {
   return (
     <div className="bg-secondary flex items-center justify-between p-2">
-      <div className="flex space-x-1">
-        {/* <CiSettings className="text-xl text-white" /> */}
-      </div>
+      <Settings />
       <p>
         Made with ❤️ by{" "}
         <a

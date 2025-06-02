@@ -7,6 +7,7 @@ import {
   lastSeenStorage,
 } from "@/lib/storage";
 import useRecording from "../store/useRecording.store";
+import { useEffect } from "react";
 
 const useInitialData = () => {
   const { setBuckets } = useBucket.getState();

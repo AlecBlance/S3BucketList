@@ -8,7 +8,7 @@ export default defineConfig({
   outDir: "dist", // default: ".output"
   srcDir: "src", // default: "."
   manifest: {
-    permissions: ["webRequest", "storage"],
+    permissions: ["webRequest", "storage", "tabs"],
     host_permissions: ["<all_urls>"],
   },
   vite: () => ({

@@ -1,4 +1,4 @@
-import { IBucket } from "@/@types";
+import { IBucket, ISettings } from "@/@types";
 
 export const bucketsStorage = storage.defineItem<IBucket[]>("local:buckets", {
   fallback: [],
@@ -14,3 +14,10 @@ export const isRecordingStorage = storage.defineItem<boolean>(
 export const lastSeenStorage = storage.defineItem<number>("local:lastSeen", {
   fallback: 0,
 });
+
+export const settingsStorage = storage.defineItem<Partial<ISettings>>(
+  "local:settings",
+  {
+    fallback: {},
+  },
+);

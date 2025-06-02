@@ -16,3 +16,10 @@ export interface IPermissions {
   LogDelivery?: string[];
   ListBucket?: boolean;
 }
+
+export interface ISettings {
+  tabOnly: {
+    enabled: boolean;
+    tabIds: string[];
+  };
+}
