@@ -224,14 +224,17 @@ export const MultiSelect = React.forwardRef<
                         {IconComponent && (
                           <IconComponent className="mr-2 h-4 w-4" />
                         )}
-                        {option?.label}
-                        <XCircle
+                        {/* Extract text within the first [] in the label */}
+                        {option?.label.match(/\[([^\]]+)\]/)?.[1] ||
+                          option?.label}
+                        {/* <XCircle
                           className="ml-2 h-4 w-4 cursor-pointer"
                           onClick={(event) => {
                             event.stopPropagation();
                             toggleOption(value);
+                            alert()
                           }}
-                        />
+                        /> */}
                       </Badge>
                     );
                   })}
@@ -245,13 +248,13 @@ export const MultiSelect = React.forwardRef<
                       style={{ animationDuration: `${animation}s` }}
                     >
                       {`+ ${selectedValues.length - maxCount} more`}
-                      <XCircle
+                      {/* <XCircle
                         className="ml-2 h-4 w-4 cursor-pointer"
                         onClick={(event) => {
                           event.stopPropagation();
                           clearExtraOptions();
                         }}
-                      />
+                      /> */}
                     </Badge>
                   )}
                 </div>
@@ -281,7 +284,7 @@ export const MultiSelect = React.forwardRef<
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-auto p-0"
+          className="p-0"
           align="start"
           onEscapeKeyDown={() => setIsPopoverOpen(false)}
         >

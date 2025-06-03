@@ -15,9 +15,11 @@ export const lastSeenStorage = storage.defineItem<number>("local:lastSeen", {
   fallback: 0,
 });
 
-export const settingsStorage = storage.defineItem<Partial<ISettings>>(
-  "local:settings",
-  {
-    fallback: {},
+export const settingsStorage = storage.defineItem<ISettings>("local:settings", {
+  fallback: {
+    tabOnly: {
+      enabled: false,
+      tabIds: [],
+    },
   },
-);
+});

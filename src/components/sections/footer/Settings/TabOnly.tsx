@@ -4,10 +4,16 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { MultiSelect } from "@/components/ui/multiselect";
 import { settingsStorage } from "@/lib/storage";
+import useSettings from "@/lib/store/useSettings.store";
+import { sendMessage } from "webext-bridge/popup";
 
 const TabOnly = () => {
-  const [isEnabled, setIsEnabled] = useState(false);
+  const { settings } = useSettings((state) => state);
+  const [isEnabled, setIsEnabled] = useState(
+    settings.tabOnly?.enabled || false,
+  );
 
+  // Fetch all tabs and filter out those without an ID
   const { data: tabs = [] } = useQuery({
     queryKey: ["tabOnlyEnabled", isEnabled],
     enabled: isEnabled,
@@ -21,19 +27,23 @@ const TabOnly = () => {
     },
   });
 
-  const { data: settings } = useQuery({
-    queryKey: ["settings"],
-    enabled: isEnabled,
-    queryFn: async () => await settingsStorage.getValue(),
-  });
-
   return (
     <div className="mt-2 flex gap-3">
       <Checkbox
         id="tab-only"
-        onCheckedChange={() => setIsEnabled(!isEnabled)}
+        checked={isEnabled}
+        onCheckedChange={() => {
+          setIsEnabled(!isEnabled);
+          settingsStorage.setValue({
+            ...settings,
+            tabOnly: {
+              enabled: !isEnabled,
+              tabIds: !isEnabled === true ? settings.tabOnly?.tabIds || [] : [],
+            },
+          });
+        }}
       />
-      <div className="flex flex-col gap-2">
+      <div className="flex w-full flex-col gap-2">
         <Label htmlFor="tab-only" className="text-primary-foreground">
           Tab-only recording
         </Label>
@@ -49,8 +59,10 @@ const TabOnly = () => {
                 },
               });
             }}
+            defaultValue={settings.tabOnly?.tabIds || []}
             placeholder="Select tabs to record"
             maxCount={3}
+            modalPopover={true}
           />
         )}
       </div>
