@@ -10,8 +10,8 @@
 - [x] Better filtering of buckets
 - [x] Accurate permission extraction
 - [x] S3 Bucket Takeover detection
-- [ ] tab-only bucket listeners
+- [x] tab-only bucket listeners
 - [ ] Exclusions
 - [ ] View full URL request
-- [ ] Better UI / UX
+- [x] Better UI / UX
 - [ ] Authenticated AWS checking
