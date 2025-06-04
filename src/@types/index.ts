@@ -3,7 +3,6 @@ export interface IBucket {
   hostname: string;
   origin?: string;
   owner?: string | undefined;
-  owned?: boolean;
   claimed?: boolean;
   permissions: IPermissions;
   public: boolean;

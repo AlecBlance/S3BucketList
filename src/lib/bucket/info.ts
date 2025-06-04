@@ -16,9 +16,10 @@ export const getBucketInfo = async (
   const listBucket =
     listBucketReq.status === "fulfilled" ? listBucketReq.value : {};
   const acl = aclReq.status === "fulfilled" ? aclReq.value : undefined;
-
   const $ = acl ? load(acl.data) : undefined;
-  const owned = aclReq.status !== "rejected" || aclReq.reason.status !== 404;
+  // TODO: [ISSUE#32] Re-enable bucket ownership detection after resolving related issues.
+  // The issue is that some buckets return 404 for ACL requests, even if they are owned.
+  // const owned = aclReq.status !== "rejected" || aclReq.reason.status !== 404;
   const aclPermissions = $ ? getACLPermissions($) : undefined;
   const permissions: IPermissions = {
     ...listBucket,
@@ -29,12 +30,15 @@ export const getBucketInfo = async (
     public:
       !!aclPermissions?.AllUsers?.length ||
       !!aclPermissions?.AuthenticatedUsers?.length ||
-      !!listBucket?.ListBucket ||
-      !owned,
+      !!aclPermissions?.LogDelivery?.length ||
+      !!listBucket?.ListBucket,
+    // TODO: [ISSUE#32] Re-enable bucket ownership detection after resolving related issues
+    // !owned,
     date: Date.now(),
     hostname: bucketName,
     owner: $?.("Owner")?.text(),
-    owned,
+    // TODO: [ISSUE#32] Re-enable bucket ownership detection after resolving related issues
+    // owned,
     permissions,
   };
 };
