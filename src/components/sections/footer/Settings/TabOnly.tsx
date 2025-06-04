@@ -34,6 +34,9 @@ const TabOnly = () => {
         checked={isEnabled}
         onCheckedChange={() => {
           setIsEnabled(!isEnabled);
+          // Send message to background to toggle tab-only recording
+          !isEnabled && sendMessage("settings:tabOnly", [], "background");
+          // Update settings storage
           settingsStorage.setValue({
             ...settings,
             tabOnly: {
@@ -51,6 +54,9 @@ const TabOnly = () => {
           <MultiSelect
             options={tabs}
             onValueChange={(tabIds) => {
+              // Send message to background to update tab IDs for recording
+              sendMessage("settings:tabOnly", tabIds, "background");
+              // Update settings storage with selected tab IDs
               settingsStorage.setValue({
                 ...settings,
                 tabOnly: {
