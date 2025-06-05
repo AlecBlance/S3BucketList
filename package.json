@@ -1,5 +1,5 @@
 {
-  "name": "s3bucketlist",
+  "name": "S3BucketList",
   "description": "S3BucketList automatically scans network requests made by your browser to detect Amazon S3 bucket URLs",
   "private": true,
   "version": "4.0.0",
