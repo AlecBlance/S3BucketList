@@ -35,8 +35,8 @@ jobs:
         if: steps.changesets.outputs.hasChangesets == 'false'
         run: |
           version=${{ fromJson(steps.changesets.outputs.publishedPackages)[0].version }}
-          (pnpm run zip & pnpm run zip:firefox &)
-          wait
+          pnpm run zip
+          pnpm run zip:firefox
           cd dist
           gh release upload ${version} s3bucketlist-${version}-chrome.zip s3bucketlist-${version}-firefox.zip
         env:
