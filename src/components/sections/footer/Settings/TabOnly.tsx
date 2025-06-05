@@ -14,7 +14,7 @@ const TabOnly = () => {
   );
 
   // Fetch all tabs and filter out those without an ID
-  const { data: tabs = [] } = useQuery({
+  const { data: tabs = [], isLoading } = useQuery({
     queryKey: ["tabOnlyEnabled", isEnabled],
     enabled: isEnabled,
     queryFn: async () => {
@@ -35,7 +35,7 @@ const TabOnly = () => {
         onCheckedChange={() => {
           setIsEnabled(!isEnabled);
           // Send message to background to toggle tab-only recording
-          !isEnabled && sendMessage("settings:tabOnly", [], "background");
+          sendMessage("settings:tabOnly", [], "background");
           // Update settings storage
           settingsStorage.setValue({
             ...settings,
@@ -50,7 +50,7 @@ const TabOnly = () => {
         <Label htmlFor="tab-only" className="text-primary-foreground">
           Tab-only recording
         </Label>
-        {isEnabled && (
+        {isEnabled && !isLoading && (
           <MultiSelect
             options={tabs}
             onValueChange={(tabIds) => {
@@ -65,7 +65,11 @@ const TabOnly = () => {
                 },
               });
             }}
-            defaultValue={settings.tabOnly?.tabIds || []}
+            defaultValue={
+              settings.tabOnly?.tabIds.filter((id) =>
+                tabs.some((tab) => tab.value === id),
+              ) || []
+            }
             placeholder="Select tabs to record"
             maxCount={3}
             modalPopover={true}
