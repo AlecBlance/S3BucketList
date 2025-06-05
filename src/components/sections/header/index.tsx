@@ -21,7 +21,10 @@ const Header = () => {
         </svg>
         <div className="flex flex-col">
           <p className="text-xl font-black">
-            BucketList <span className="text-xs font-light">v4.0.0</span>
+            BucketList{" "}
+            <span className="text-xs font-light">
+              v{import.meta.env.VITE_VERSION}
+            </span>
           </p>
           <p>Records, lists, inspects S3 from Network</p>
         </div>

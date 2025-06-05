@@ -1,6 +1,7 @@
 import { defineConfig } from "wxt";
 import path from "path";
 import tailwindcss from "@tailwindcss/vite";
+import fs from "fs";
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
@@ -11,12 +12,18 @@ export default defineConfig({
     permissions: ["webRequest", "storage", "tabs"],
     host_permissions: ["<all_urls>"],
   },
-  vite: () => ({
-    plugins: [tailwindcss()],
-    resolve: {
-      alias: {
-        "@": path.resolve(__dirname, "./src"),
+  vite: () => {
+    process.env.VITE_VERSION = JSON.parse(
+      fs.readFileSync("package.json", "utf-8"),
+    ).version;
+
+    return {
+      plugins: [tailwindcss()],
+      resolve: {
+        alias: {
+          "@": path.resolve(__dirname, "./src"),
+        },
       },
-    },
-  }),
+    };
+  },
 });
