@@ -2,7 +2,7 @@
   "name": "s3bucketlist",
   "description": "S3BucketList automatically scans network requests made by your browser to detect Amazon S3 bucket URLs",
   "private": true,
-  "version": "4.0.0",
+  "version": "3.1.2",
   "type": "module",
   "scripts": {
     "dev": "wxt",
