@@ -12,10 +12,10 @@ export const addBadgeNumber = async (buckets: IBucket[]): Promise<void> => {
     (bucket) => bucket.public && bucket.date > lastSeen,
   ).length;
   if (!unseenPublicBuckets) return;
-  browser.action.setBadgeText({
+  (browser.action ?? browser.browserAction).setBadgeText({
     text: unseenPublicBuckets.toString(),
   });
-  browser.action.setBadgeBackgroundColor({
+  (browser.action ?? browser.browserAction).setBadgeBackgroundColor({
     color: "green",
   });
 };
@@ -24,10 +24,10 @@ export const addBadgeNumber = async (buckets: IBucket[]): Promise<void> => {
  * Stop recording - badge (!)
  */
 export const stopRecordingBadge = async (): Promise<void> => {
-  browser.action.setBadgeText({
+  (browser.action ?? browser.browserAction).setBadgeText({
     text: "!",
   });
-  browser.action.setBadgeBackgroundColor({
+  (browser.action ?? browser.browserAction).setBadgeBackgroundColor({
     color: "orange",
   });
 };

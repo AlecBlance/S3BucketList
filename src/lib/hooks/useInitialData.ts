@@ -65,7 +65,7 @@ const useInitialData = () => {
     if (isLoading) return;
     // Clear the badge text when the extension is opened
     const text = isRecording ? "" : "!";
-    browser.action.setBadgeText({ text });
+    (browser.action ?? browser.browserAction).setBadgeText({ text });
   }, [isRecording, isLoading]);
 };
 

@@ -34,7 +34,7 @@ const CustomSwitch = () => {
         if (!recording === false) {
           stopRecordingBadge();
         } else {
-          browser.action.setBadgeText({ text: "" });
+          (browser.action ?? browser.browserAction).setBadgeText({ text: "" });
         }
       }}
     />
