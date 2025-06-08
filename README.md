@@ -26,7 +26,7 @@ You can install this extension from the [Chrome Web Store](https://chromewebstor
 
 #### Firefox
 
-> Firefox Team are still reviewing the extension. I'll add the link when it has been reviewed.
+You can install this extension from the [Firefox add-ons](https://addons.mozilla.org/en-US/android/addon/s3bucketlist/) or:
 
 1. Download from the [latest](https://github.com/AlecBlance/S3BucketList/releases) release.
 2. Extract the downloaded zip file
