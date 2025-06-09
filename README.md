@@ -2,6 +2,8 @@
 
 Search, lists, and checks S3 Buckets found in network requests while you are browsing.
 
+<a href="https://www.producthunt.com/products/s3bucketlist?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-s3bucketlist" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=975743&theme=light&t=1749475141601" alt="S3BucketList - List&#0032;and&#0032;inspect&#0032;S3Buckets&#0032;while&#0032;browsing | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+
 ![alt text](image.png)
 
 ## Features
