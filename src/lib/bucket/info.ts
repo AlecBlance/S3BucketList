@@ -1,65 +1,66 @@
 import axios from "axios";
 import { IBucket, IPermissions } from "@/@types";
-import { CheerioAPI, load } from "cheerio";
 import { Agent } from "https";
+import { CheerioAPI, load } from "cheerio";
+
+const axiosInstance = axios.create({
+  httpsAgent: new Agent({ rejectUnauthorized: false }),
+});
 
 /**
  * Get all possible information about a bucket
- * ! This needs to be refactored for better readability
  */
 export const getBucketInfo = async (
   bucketName: string,
 ): Promise<Omit<IBucket, "initiator">> => {
-  const [listBucketReq, aclReq] = await Promise.allSettled([
-    hasListBucketPermission(bucketName),
-    axios.get(`https://${bucketName}/?acl`, {
-      httpsAgent: new Agent({ rejectUnauthorized: false }),
-    }),
+  const [getBucket, getBucketAcl] = await Promise.allSettled([
+    axiosInstance.get<string>(`https://${bucketName}/`),
+    axiosInstance.get<string>(`https://${bucketName}/?acl`),
   ]);
-  const listBucket =
-    listBucketReq.status === "fulfilled" ? listBucketReq.value : {};
-  const acl = aclReq.status === "fulfilled" ? aclReq.value : undefined;
-  const $ = acl ? load(acl.data) : undefined;
+  const isAclAvailable = getBucketAcl.status === "fulfilled";
+  const isBucketAvailable = getBucket.status === "fulfilled";
+
+  let owner: string | undefined = undefined;
+  let aclPermissions: Omit<IPermissions, "ListBucket"> = {};
+
+  if (isAclAvailable) {
+    const cheerio: CheerioAPI = load(getBucketAcl.value.data);
+    aclPermissions = getACLPermissions(cheerio);
+    owner = cheerio("Owner").text();
+  }
+
+  const ListBucket = isBucketAvailable
+    ? hasListBucketPermission(getBucket.value.data)
+    : false;
+
   // TODO: [ISSUE#32] Re-enable bucket ownership detection after resolving related issues.
   // The issue is that some buckets return 404 for ACL requests, even if they are owned.
   // const owned = aclReq.status !== "rejected" || aclReq.reason.status !== 404;
-  const aclPermissions = $ ? getACLPermissions($) : undefined;
-  const permissions: IPermissions = {
-    ...listBucket,
-    ...aclPermissions,
-  };
 
   return {
-    public:
-      !!aclPermissions?.AllUsers?.length ||
-      !!aclPermissions?.AuthenticatedUsers?.length ||
-      !!aclPermissions?.LogDelivery?.length ||
-      !!listBucket?.ListBucket,
+    public: ListBucket || isPublic(aclPermissions),
     // TODO: [ISSUE#32] Re-enable bucket ownership detection after resolving related issues
     // !owned,
     date: Date.now(),
     hostname: bucketName,
-    owner: $?.("Owner")?.text(),
+    owner,
     // TODO: [ISSUE#32] Re-enable bucket ownership detection after resolving related issues
     // owned,
-    permissions,
+    permissions: {
+      ListBucket,
+      ...aclPermissions,
+    },
   };
 };
 
 /**
  * Check if the bucket contents can be listed
  */
-export async function hasListBucketPermission(
-  bucketName: string,
-): Promise<{ ListBucket?: boolean }> {
-  const url = `https://${bucketName}`;
+export function hasListBucketPermission(bucketData: string): boolean {
   try {
-    const response = await axios.get(url, {
-      httpsAgent: new Agent({ rejectUnauthorized: false }),
-    });
-    const $ = load(response.data);
+    const $ = load(bucketData);
     const hasListBucket = $("ListBucketResult");
-    return hasListBucket.length > 0 ? { ListBucket: true } : {};
+    return hasListBucket.length > 0;
   } catch (error) {
     throw new Error("Failed to fetch list bucket permissions");
   }
@@ -69,7 +70,7 @@ export async function hasListBucketPermission(
  * Get public ACL permissions
  */
 export function getACLPermissions(
-  $: CheerioAPI,
+  cheerio: CheerioAPI,
 ): Omit<IPermissions, "ListBucket"> {
   const acl: Omit<IPermissions, "ListBucket"> = {
     AllUsers: [],
@@ -77,12 +78,12 @@ export function getACLPermissions(
     LogDelivery: [],
   };
   try {
-    const hasUri = $("URI");
-    hasUri.toArray().map((elem) => {
+    const uri = cheerio("URI");
+    uri.toArray().map((elem) => {
       // Get last path segment (e.g. "AllUsers" or "AuthenticatedUsers")
-      const title = $(elem).text().split("/").pop()!;
+      const title = cheerio(elem).text().split("/").pop()!;
       // Get Permission attached to that path segment
-      const perm = $(elem).parent().next().text();
+      const perm = cheerio(elem).parent().next().text();
       if (title in acl) {
         // acl.AuthenticatedUsers = [...(acl.AuthenticatedUsers || []), perm];
         const key = title as keyof typeof acl;
@@ -93,4 +94,11 @@ export function getACLPermissions(
   } catch (error) {
     throw new Error("Failed to fetch acl permissions");
   }
+}
+
+export function isPublic(
+  aclPermissions: Omit<IPermissions, "ListBucket"> | undefined,
+): boolean {
+  if (!aclPermissions) return false;
+  return Object.values(aclPermissions).some((value) => value.length > 0);
 }

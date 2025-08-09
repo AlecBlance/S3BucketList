@@ -1,5 +1,16 @@
 import { beforeEach, describe, it, expect } from "vitest";
-import { hasListBucketPermission, getBucketInfo } from "./info";
+import {
+  hasListBucketPermission,
+  getBucketInfo,
+  getACLPermissions,
+  isPublic,
+} from "./info";
+import {
+  fakeAclData,
+  fakeBucketData,
+  samplePermissions,
+} from "@/_test/index.config";
+import { load } from "cheerio";
 
 describe("bucket info", () => {
   beforeEach(() => {
@@ -7,13 +18,14 @@ describe("bucket info", () => {
   });
 
   it("should be able to detect ListBucket permission", async () => {
-    expect(await hasListBucketPermission("aneta.s3.amazonaws.com")).toEqual({
-      ListBucket: true,
-    });
+    expect(hasListBucketPermission(fakeBucketData)).toBeTruthy();
+    expect(hasListBucketPermission("Nothing")).toBeFalsy();
+  });
 
-    await expect(async () => {
-      await hasListBucketPermission("test.cloud.s3.amazonaws.com");
-    }).rejects.toThrowError("Failed to fetch list bucket permissions");
+  it("should be able to extract ACL permissions", () => {
+    const cheerio = load(fakeAclData);
+    const permissions = getACLPermissions(cheerio);
+    expect(permissions).toEqual(samplePermissions);
   });
 
   it("should be able to extract bucket information", async () => {
@@ -25,5 +37,10 @@ describe("bucket info", () => {
       permissions: { ListBucket: true },
     });
     expect(typeof bucketInfo.date).toBe("number");
+  });
+
+  it("should be able to check if bucket is public", async () => {
+    const _public = isPublic(samplePermissions);
+    expect(_public).toBeTruthy();
   });
 });

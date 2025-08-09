@@ -88,3 +88,11 @@ const fakeIBucketInfo = {
   public: false,
   initiator: "admin",
 };
+
+export const fakeBucketData = `<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Name>aneta</Name><Prefix/><Marker/><MaxKeys>1000</MaxKeys><IsTruncated>false</IsTruncated><Contents><Key>css/animations.css</Key><LastModified>2017-05-02T13:28:47.000Z</LastModified><ETag>"efa908b9da5810ec2b3e2f5665b26b22"</ETag><Size>88967</Size><StorageClass>STANDARD</StorageClass></Contents></ListBucketResult>`;
+export const fakeAclData = `<AccessControlPolicy xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Owner><ID>c7f6e5706fc415058cb9f4d41107a24191a94f1b79dbce9cd9a516925d718c1d</ID></Owner><AccessControlList><Grant><Grantee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="CanonicalUser"><ID>c7f6e5706fc415058cb9f4d41107a24191a94f1b79dbce9cd9a516925d718c1d</ID></Grantee><Permission>FULL_CONTROL</Permission></Grant><Grant><Grantee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="Group"><URI>http://acs.amazonaws.com/groups/global/AuthenticatedUsers</URI></Grantee><Permission>READ</Permission></Grant><Grant><Grantee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="Group"><URI>http://acs.amazonaws.com/groups/global/AuthenticatedUsers</URI></Grantee><Permission>READ_ACP</Permission></Grant><Grant><Grantee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="Group"><URI>http://acs.amazonaws.com/groups/global/AllUsers</URI></Grantee><Permission>READ</Permission></Grant><Grant><Grantee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="Group"><URI>http://acs.amazonaws.com/groups/global/AllUsers</URI></Grantee><Permission>READ_ACP</Permission></Grant></AccessControlList></AccessControlPolicy>`;
+export const samplePermissions = {
+  AllUsers: ["READ", "READ_ACP"],
+  AuthenticatedUsers: ["READ", "READ_ACP"],
+  LogDelivery: [],
+};
