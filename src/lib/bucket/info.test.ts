@@ -7,9 +7,7 @@ describe("bucket info", () => {
   });
 
   it("should be able to detect ListBucket permission", async () => {
-    expect(
-      await hasListBucketPermission("flaws.cloud.s3.amazonaws.com")
-    ).toEqual({
+    expect(await hasListBucketPermission("aneta.s3.amazonaws.com")).toEqual({
       ListBucket: true,
     });
 
@@ -19,13 +17,11 @@ describe("bucket info", () => {
   });
 
   it("should be able to extract bucket information", async () => {
-    const bucketInfo = await getBucketInfo("flaws.cloud.s3.amazonaws.com");
-    console.log("bucketInfo", bucketInfo);
+    const bucketInfo = await getBucketInfo("aneta.s3.amazonaws.com");
     expect(bucketInfo).toMatchObject({
       public: true,
-      hostname: "flaws.cloud.s3.amazonaws.com",
-      owner: undefined,
-      owned: true,
+      hostname: "aneta.s3.amazonaws.com",
+      owner: "c7f6e5706fc415058cb9f4d41107a24191a94f1b79dbce9cd9a516925d718c1d",
       permissions: { ListBucket: true },
     });
     expect(typeof bucketInfo.date).toBe("number");

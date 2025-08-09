@@ -1,6 +1,7 @@
 import axios from "axios";
 import { IBucket, IPermissions } from "@/@types";
 import { CheerioAPI, load } from "cheerio";
+import { Agent } from "https";
 
 /**
  * Get all possible information about a bucket
@@ -11,7 +12,9 @@ export const getBucketInfo = async (
 ): Promise<Omit<IBucket, "initiator">> => {
   const [listBucketReq, aclReq] = await Promise.allSettled([
     hasListBucketPermission(bucketName),
-    axios.get(`https://${bucketName}/?acl`),
+    axios.get(`https://${bucketName}/?acl`, {
+      httpsAgent: new Agent({ rejectUnauthorized: false }),
+    }),
   ]);
   const listBucket =
     listBucketReq.status === "fulfilled" ? listBucketReq.value : {};
@@ -51,7 +54,9 @@ export async function hasListBucketPermission(
 ): Promise<{ ListBucket?: boolean }> {
   const url = `https://${bucketName}`;
   try {
-    const response = await axios.get(url);
+    const response = await axios.get(url, {
+      httpsAgent: new Agent({ rejectUnauthorized: false }),
+    });
     const $ = load(response.data);
     const hasListBucket = $("ListBucketResult");
     return hasListBucket.length > 0 ? { ListBucket: true } : {};
