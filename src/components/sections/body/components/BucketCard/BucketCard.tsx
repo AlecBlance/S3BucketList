@@ -6,7 +6,7 @@ import useLastSeen from "@/lib/store/useLastSeen.store";
 
 type BucketCardProps = Pick<
   IBucket,
-  "hostname" | "initiator" | "permissions" | "date"
+  "hostname" | "initiator" | "permissions" | "date" | "owned"
 >;
 
 const BucketCard = ({
@@ -14,16 +14,9 @@ const BucketCard = ({
   initiator,
   permissions,
   date,
+  owned,
 }: BucketCardProps) => {
   const { lastSeen } = useLastSeen((state) => state);
-
-  // const formattedPermissions: Record<string, string> = {
-  //   READ: "R",
-  //   READ_ACP: "RA",
-  //   WRITE: "W",
-  //   WRITE_ACP: "WA",
-  //   FULL_CONTROL: "F",
-  // };
 
   const labelMap: Record<string, string> = {
     AllUsers: "All",
@@ -38,6 +31,7 @@ const BucketCard = ({
           <CardHeader className="flex items-center justify-between px-4">
             <CardTitle className="flex space-x-2 truncate text-sm">
               {lastSeen < date && <Badge>New</Badge>}
+              {!owned && <Badge className="bg-red-500">Unclaimed</Badge>}
               <p className="truncate">{hostname}</p>{" "}
             </CardTitle>
             <OptionsDropdown hostname={hostname} />

@@ -7,6 +7,7 @@ export interface IBucket {
   permissions: IPermissions;
   public: boolean;
   initiator?: string;
+  owned?: boolean;
 }
 
 export interface IPermissions {
@@ -16,6 +17,7 @@ export interface IPermissions {
   ListBucket?: boolean;
 }
 
+export type IAclPermissions = Omit<IPermissions, "ListBucket">;
 export interface ISettings {
   tabOnly: {
     enabled: boolean;

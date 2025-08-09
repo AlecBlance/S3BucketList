@@ -18,8 +18,11 @@ describe("bucket info", () => {
   });
 
   it("should be able to detect ListBucket permission", async () => {
-    expect(hasListBucketPermission(fakeBucketData)).toBeTruthy();
-    expect(hasListBucketPermission("Nothing")).toBeFalsy();
+    const cheerio = load(fakeBucketData);
+    const noDataCheerio = load("Nothing");
+
+    expect(hasListBucketPermission(cheerio)).toBeTruthy();
+    expect(hasListBucketPermission(noDataCheerio)).toBeFalsy();
   });
 
   it("should be able to extract ACL permissions", () => {
@@ -42,5 +45,10 @@ describe("bucket info", () => {
   it("should be able to check if bucket is public", async () => {
     const _public = isPublic(samplePermissions);
     expect(_public).toBeTruthy();
+  });
+
+  it("should be able to check if bucket can be claimed", async () => {
+    const bucketInfo = await getBucketInfo("bhjsdfgkjn.s3.amazonaws.com");
+    expect(bucketInfo.owned).toBeFalsy();
   });
 });
