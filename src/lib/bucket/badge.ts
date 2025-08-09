@@ -6,7 +6,6 @@ import { lastSeenStorage } from "../storage";
  */
 
 export const addBadgeNumber = async (buckets: IBucket[]): Promise<void> => {
-  console.log("Adding badge number", buckets);
   const lastSeen = await lastSeenStorage.getValue();
   const unseenPublicBuckets = buckets.filter(
     (bucket) => bucket.public && bucket.date > lastSeen,
