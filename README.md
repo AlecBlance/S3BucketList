@@ -26,6 +26,7 @@ Search, lists, and checks S3 Buckets found in network requests while you are bro
 - Download recorded buckets
 - Manage recorded buckets
 - Tab-specific bucket recording
+- Unclaimed / Hanging / Vulnerable buckets
 
 ## Installation
 
