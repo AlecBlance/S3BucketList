@@ -30,6 +30,7 @@ const BucketList = ({ buckets }: { buckets: IBucket[] }) => {
             initiator={bucket.initiator}
             permissions={bucket.permissions}
             key={bucket.hostname}
+            owned={bucket.owned}
           />
         ))}
       </div>
