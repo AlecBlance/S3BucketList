@@ -31,7 +31,9 @@ const BucketCard = ({
           <CardHeader className="flex items-center justify-between px-4">
             <CardTitle className="flex space-x-2 truncate text-sm">
               {lastSeen < date && <Badge>New</Badge>}
-              {!owned && <Badge className="bg-red-500">Unclaimed</Badge>}
+              {owned === false && (
+                <Badge className="bg-red-500">Unclaimed</Badge>
+              )}
               <p className="truncate">{hostname}</p>{" "}
             </CardTitle>
             <OptionsDropdown hostname={hostname} />
