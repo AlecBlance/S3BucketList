@@ -1,5 +1,11 @@
 # s3bucketlist
 
+## 4.1.1
+
+### Patch Changes
+
+- e198a90: fix unclaimed badge showing on previous records
+
 ## 4.1.0
 
 ### Minor Changes
