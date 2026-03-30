@@ -1,5 +1,12 @@
 # s3bucketlist
 
+## 4.1.2
+
+### Patch Changes
+
+- e4b1827: remove unused content script
+- 4f82c11: fix unhandled regional buckets
+
 ## 4.1.1
 
 ### Patch Changes
