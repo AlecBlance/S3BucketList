@@ -32,7 +32,6 @@ export function cleanBucketUrl(hostname: string, pathname: string): string {
 
   if (
     (hostname === "s3.amazonaws.com" || isRegionalEndpoint) &&
-    pathname.length > 1 &&
     pathname !== "/"
   ) {
     const bucket = pathname.split("/")[1];
