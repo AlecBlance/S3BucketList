@@ -25,12 +25,23 @@ export const bucketRecorder = async (
  * Cleans the url. Making sure it has this format: {bucketName}.s3.amazonaws.com or the original hostname
  * There are instances where the bucket name is a pathname
  */
-export const cleanBucketUrl = (hostname: string, pathname: string): string => {
-  return hostname === "s3.amazonaws.com"
-    ? `${pathname.split("/")[1]}.${hostname}`
-    : hostname;
-};
+export function cleanBucketUrl(hostname: string, pathname: string): string {
+  const isRegionalEndpoint = /^s3[.-][a-z0-9-]+\.amazonaws\.com$/.test(
+    hostname,
+  );
 
+  if (
+    (hostname === "s3.amazonaws.com" || isRegionalEndpoint) &&
+    pathname !== "/"
+  ) {
+    const bucket = pathname.split("/")[1];
+    if (bucket) {
+      return `${bucket}.s3.amazonaws.com`;
+    }
+  }
+
+  return hostname;
+}
 /**
  * Adds bucket information to the storage
  */

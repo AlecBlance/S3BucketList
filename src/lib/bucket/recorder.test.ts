@@ -18,6 +18,30 @@ describe("recorder", () => {
     expect(oldS3WithExtra).toBe("test.s3.amazonaws.com");
   });
 
+  it("should clean regional bucket url", () => {
+    const dottedRegional = cleanBucketUrl(
+      "s3.us-east-1.amazonaws.com",
+      "/my-bucket",
+    );
+    const dashedRegional = cleanBucketUrl(
+      "s3-us-west-2.amazonaws.com",
+      "/my-bucket",
+    );
+    const regionalWithExtra = cleanBucketUrl(
+      "s3.eu-central-1.amazonaws.com",
+      "/my-bucket/key",
+    );
+    const regionalWithRootPath = cleanBucketUrl(
+      "s3.ap-southeast-1.amazonaws.com",
+      "/",
+    );
+
+    expect(dottedRegional).toBe("my-bucket.s3.amazonaws.com");
+    expect(dashedRegional).toBe("my-bucket.s3.amazonaws.com");
+    expect(regionalWithExtra).toBe("my-bucket.s3.amazonaws.com");
+    expect(regionalWithRootPath).toBe("s3.ap-southeast-1.amazonaws.com");
+  });
+
   it("should store bucket info", async () => {
     await addToBucketStorage(fakeIBucketInfo);
     const bucketsList = (await fakeBrowser.storage.local.get("buckets"))
