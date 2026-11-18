@@ -4,6 +4,8 @@ import { bucketsStorage } from "@/lib/storage";
 import { logger } from "../logger";
 import { addBadgeNumber } from "./badge";
 
+const inFlightInspections = new Map<string, Promise<void>>();
+
 /**
  * Handles the checking of the request to see if it is an S3 bucket request
  * and if so, it retrieves the bucketname and permissions
@@ -14,11 +16,25 @@ export const bucketRecorder = async (
   if (!isReqBucket(request)) return;
   const { hostname, pathname } = new URL(request.url);
   const bucketUrl = cleanBucketUrl(hostname, pathname);
-  const bucketInfo = await getBucketInfo(bucketUrl);
-  addToBucketStorage({
-    ...bucketInfo,
-    initiator: request.initiator, //where the request came from
-  });
+  const pending = inFlightInspections.get(bucketUrl);
+  if (pending) return pending;
+
+  const inspection = (async () => {
+    const buckets = await bucketsStorage.getValue();
+    if (buckets.some((bucket) => bucket.hostname === bucketUrl)) return;
+    const bucketInfo = await getBucketInfo(bucketUrl);
+    await addToBucketStorage({
+      ...bucketInfo,
+      initiator: request.initiator,
+    });
+  })();
+  inFlightInspections.set(bucketUrl, inspection);
+  try {
+    await inspection;
+  } finally {
+    // Failed inspections can be retried by a later request.
+    inFlightInspections.delete(bucketUrl);
+  }
 };
 
 /**
@@ -54,7 +70,7 @@ export const addToBucketStorage = async (
   );
   if (isRecorded) return;
   bucketsList.push(bucketInfo);
-  bucketsStorage.setValue(bucketsList);
+  await bucketsStorage.setValue(bucketsList);
   addBadgeNumber(bucketsList);
   logger("Bucket added to storage", bucketInfo);
 };
