@@ -10,6 +10,7 @@ import {
 import useRecording from "../store/useRecording.store";
 import { useEffect } from "react";
 import useSettings from "../store/useSettings.store";
+import { subscribeStorage } from "../subscribeStorage";
 
 const useInitialData = () => {
   const { setBuckets } = useBucket.getState();
@@ -20,14 +21,7 @@ const useInitialData = () => {
   /**
    * Fetches the initial data for buckets.
    */
-  useQuery({
-    queryKey: ["buckets"],
-    queryFn: async () => {
-      const buckets = await bucketsStorage.getValue();
-      setBuckets(buckets);
-      return null;
-    },
-  });
+  useEffect(() => subscribeStorage(bucketsStorage, setBuckets), [setBuckets]);
 
   /**
    * Fetches the initial last seen date.
@@ -51,14 +45,10 @@ const useInitialData = () => {
     },
   });
 
-  useQuery({
-    queryKey: ["settings"],
-    queryFn: async () => {
-      const settings = await settingsStorage.getValue();
-      setSettings(settings);
-      return null;
-    },
-  });
+  useEffect(
+    () => subscribeStorage(settingsStorage, setSettings),
+    [setSettings],
+  );
 
   useEffect(() => {
     setRecordingLoading(isLoading);
