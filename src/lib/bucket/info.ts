@@ -96,5 +96,9 @@ export function getACLPermissions(cheerio: CheerioAPI): IAclPermissions {
 
 export function isPublic(aclPermissions: IAclPermissions | undefined): boolean {
   if (!aclPermissions) return false;
-  return Object.values(aclPermissions).some((value) => value.length > 0);
+  // LogDelivery is an AWS service group, not public access.
+  return (
+    (aclPermissions.AllUsers?.length ?? 0) > 0 ||
+    (aclPermissions.AuthenticatedUsers?.length ?? 0) > 0
+  );
 }
