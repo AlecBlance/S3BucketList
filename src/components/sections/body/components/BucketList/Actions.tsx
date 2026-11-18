@@ -1,6 +1,7 @@
 import { IBucket } from "@/@types";
 import useBucket from "@/lib/store/useBucket.store";
 import { bucketsStorage } from "@/lib/storage";
+import { downloadBuckets } from "@/lib/bucket/download";
 
 const Actions = ({ buckets }: { buckets: IBucket[] }) => {
   const { buckets: bucketsState, setBuckets } = useBucket((state) => state);
@@ -11,22 +12,6 @@ const Actions = ({ buckets }: { buckets: IBucket[] }) => {
     );
     setBuckets(updatedBuckets);
     bucketsStorage.setValue(updatedBuckets);
-  };
-
-  const handleDownload = () => {
-    if (buckets.length === 0) {
-      alert("No buckets to download.");
-    }
-    const data = JSON.stringify(buckets, null, 2);
-    const blob = new Blob([data], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `buckets-${buckets[0].public ? "public" : "private"}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   };
 
   return (
@@ -45,8 +30,9 @@ const Actions = ({ buckets }: { buckets: IBucket[] }) => {
         </button>
         <p>-</p>
         <button
-          className="hover:text-primary cursor-pointer"
-          onClick={handleDownload}
+          className="hover:text-primary cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={buckets.length === 0}
+          onClick={() => downloadBuckets(buckets)}
         >
           Download
         </button>
