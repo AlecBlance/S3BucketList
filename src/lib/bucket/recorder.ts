@@ -15,7 +15,7 @@ export const bucketRecorder = async (
   const { hostname, pathname } = new URL(request.url);
   const bucketUrl = cleanBucketUrl(hostname, pathname);
   const bucketInfo = await getBucketInfo(bucketUrl);
-  addToBucketStorage({
+  await addToBucketStorage({
     ...bucketInfo,
     initiator: request.initiator, //where the request came from
   });
