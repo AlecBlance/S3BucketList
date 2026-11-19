@@ -14,7 +14,7 @@ import useBucket from "@/lib/store/useBucket.store";
 const OptionsDropdown = ({ hostname }: { hostname: string }) => {
   const { setBuckets } = useBucket((state) => state);
   const openInNewTab = () => {
-    window.open(`http://${hostname}`, "_blank");
+    window.open(`https://${hostname}`, "_blank", "noopener,noreferrer");
   };
 
   const deleteBucket = async () => {
