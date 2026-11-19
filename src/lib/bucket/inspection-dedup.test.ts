@@ -55,4 +55,22 @@ describe("inspection deduplication", () => {
     });
     expect(getInfo).toHaveBeenCalledTimes(2);
   });
+
+  it("preserves distinct buckets inspected concurrently", async () => {
+    getInfo.mockImplementation(async (hostname: string) => ({
+      ...fakeIBucketInfo,
+      hostname,
+    }));
+    await Promise.all([
+      bucketRecorder(s3Request),
+      bucketRecorder({
+        ...s3Request,
+        url: "https://another.s3.amazonaws.com/object",
+      }),
+    ]);
+    expect(getInfo).toHaveBeenCalledTimes(2);
+    expect(
+      (await bucketsStorage.getValue()).map((bucket) => bucket.hostname).sort(),
+    ).toEqual(["another.s3.amazonaws.com", "sample.s3.amazonaws.com"]);
+  });
 });

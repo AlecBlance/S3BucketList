@@ -7,21 +7,27 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MdOpenInNew } from "react-icons/md";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { bucketsStorage } from "@/lib/storage";
+import { sendMessage } from "webext-bridge/popup";
+import { logger } from "@/lib/logger";
 import useBucket from "@/lib/store/useBucket.store";
 
 const OptionsDropdown = ({ hostname }: { hostname: string }) => {
-  const { buckets, setBuckets } = useBucket((state) => state);
+  const { setBuckets } = useBucket((state) => state);
   const openInNewTab = () => {
     window.open(`http://${hostname}`, "_blank");
   };
 
-  const deleteBucket = () => {
-    const updatedBuckets = buckets.filter(
-      (bucket) => bucket.hostname !== hostname,
-    );
-    bucketsStorage.setValue(updatedBuckets);
-    setBuckets(updatedBuckets);
+  const deleteBucket = async () => {
+    try {
+      const updatedBuckets = await sendMessage(
+        "buckets:remove",
+        [hostname],
+        "background",
+      );
+      setBuckets(updatedBuckets);
+    } catch (error) {
+      logger("Failed to delete bucket:", error);
+    }
   };
 
   return (
