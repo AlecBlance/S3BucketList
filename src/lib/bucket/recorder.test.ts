@@ -1,11 +1,18 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { cleanBucketUrl, addToBucketStorage } from "./recorder";
+import {
+  cleanBucketUrl,
+  addToBucketStorage,
+  removeFromBucketStorage,
+} from "./recorder";
 import { IBucket } from "@/@types";
 import { fakeIBucketInfo } from "@/_test/index.config";
+import { bucketsStorage } from "@/lib/storage";
+import { vi } from "vitest";
 
 describe("recorder", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     fakeBrowser.reset();
+    await bucketsStorage.setValue([]);
   });
 
   it("should clean bucket url", () => {
@@ -49,5 +56,37 @@ describe("recorder", () => {
     expect(bucketsList).toBeDefined();
     expect(bucketsList).toHaveLength(1);
     expect(bucketsList[0]).toMatchObject(fakeIBucketInfo);
+  });
+
+  it("preserves concurrent insertions and deduplicates hostnames", async () => {
+    const second = { ...fakeIBucketInfo, hostname: "second.s3.amazonaws.com" };
+    await Promise.all([
+      addToBucketStorage(fakeIBucketInfo),
+      addToBucketStorage(second),
+      addToBucketStorage(fakeIBucketInfo),
+    ]);
+    expect(await bucketsStorage.getValue()).toEqual([fakeIBucketInfo, second]);
+  });
+
+  it("serializes deletions with insertions without losing unrelated records", async () => {
+    await addToBucketStorage(fakeIBucketInfo);
+    const second = { ...fakeIBucketInfo, hostname: "second.s3.amazonaws.com" };
+    await Promise.all([
+      addToBucketStorage(second),
+      removeFromBucketStorage([fakeIBucketInfo.hostname]),
+    ]);
+    expect(await bucketsStorage.getValue()).toEqual([second]);
+  });
+
+  it("propagates write errors and allows later mutations to succeed", async () => {
+    vi.spyOn(bucketsStorage, "setValue").mockRejectedValueOnce(
+      new Error("Write failed"),
+    );
+    await expect(addToBucketStorage(fakeIBucketInfo)).rejects.toThrow(
+      "Write failed",
+    );
+    await addToBucketStorage(fakeIBucketInfo);
+    expect(await bucketsStorage.getValue()).toEqual([fakeIBucketInfo]);
+    vi.restoreAllMocks();
   });
 });

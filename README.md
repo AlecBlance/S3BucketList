@@ -57,3 +57,54 @@ You can install this extension from the [Firefox add-ons](https://addons.mozilla
 4. Do `pnpm zip` for chrome-compatible version or `pnpm zip:firefox` for firefox-compatible version.
 5. A zip file will be created in the `dist/` folder
 6. Follow the manual installation steps above on how to install the extension.
+
+## Automated Chrome Web Store releases
+
+Merge the fix and feature PRs first, then merge the Changesets **Version Packages**
+PR when ready to release. After successful CI, the Publish workflow creates the
+GitHub release, builds and attaches the Chrome and Firefox ZIPs, and submits the
+Chrome ZIP to the existing Chrome Web Store listing. Google still reviews the
+update; submission does not mean it is immediately live. Firefox store submission
+is not automated by this workflow.
+
+### One-time setup
+
+1. Enable the Chrome Web Store API in a dedicated Google Cloud project and create
+   a service account **without Google Cloud project roles**, following the
+   [official service-account guide](https://developer.chrome.com/docs/webstore/service-accounts).
+2. Add its email in the Chrome Web Store Developer Dashboard under
+   **Settings > Service account**. Google grants API access to all items owned by
+   that publisher. The release script deliberately fixes the target to
+   S3BucketList (`anngjobjhcbancaaogmlcffohpmcniki`).
+3. In GitHub, open **Settings > Secrets and variables > Actions** and add:
+
+   | Repository secret | Value |
+   | --- | --- |
+   | `CHROME_SERVICE_ACCOUNT_KEY` | Full JSON key created for the dedicated service account |
+   | `CHROME_PUBLISHER_ID` | Publisher ID from the store dashboard's Settings page |
+
+This is private server-to-server publishing: no public OAuth consent screen,
+homepage, privacy-policy URL, client secret, or refresh token is required for
+this authentication method. It does not change the extension's store policy
+obligations.
+
+Keep the JSON key out of source files, PRs, and logs. Supply the two environment
+variables above securely and run this read-only check using Node.js 20 (matching
+CI) before the first release:
+
+```sh
+node scripts/publish-chrome.mjs --dry-run
+```
+
+Missing credentials or a rejected submission fail the Publish workflow visibly.
+The GitHub release and ZIPs are created before store submission, so they remain
+available if submission fails. Do not bump the version merely to retry an upload
+failure: inspect the store status first, then run `node scripts/publish-chrome.mjs
+<chrome-zip-path>` from the release's Git tag with the existing release's Chrome
+ZIP. The script skips already-published or already-submitted versions, refuses to
+replace another pending or staged version, waits for asynchronous uploads, and
+blocks publication on store warnings. Google review is not bypassed.
+
+Rotate the service account key periodically. After saving a new key as the GitHub
+secret and verifying read access, delete the superseded key in Google Cloud.
+Never commit a downloaded key file.

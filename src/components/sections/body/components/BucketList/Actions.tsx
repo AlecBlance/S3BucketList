@@ -1,16 +1,22 @@
 import { IBucket } from "@/@types";
 import useBucket from "@/lib/store/useBucket.store";
-import { bucketsStorage } from "@/lib/storage";
+import { sendMessage } from "webext-bridge/popup";
+import { logger } from "@/lib/logger";
 
 const Actions = ({ buckets }: { buckets: IBucket[] }) => {
-  const { buckets: bucketsState, setBuckets } = useBucket((state) => state);
+  const { setBuckets } = useBucket((state) => state);
 
-  const removeAllBuckets = (hostnames: string[]) => {
-    const updatedBuckets = bucketsState.filter(
-      (bucket) => !hostnames.includes(bucket.hostname),
-    );
-    setBuckets(updatedBuckets);
-    bucketsStorage.setValue(updatedBuckets);
+  const removeAllBuckets = async (hostnames: string[]) => {
+    try {
+      const updatedBuckets = await sendMessage(
+        "buckets:remove",
+        hostnames,
+        "background",
+      );
+      setBuckets(updatedBuckets);
+    } catch (error) {
+      logger("Failed to delete buckets:", error);
+    }
   };
 
   const handleDownload = () => {
