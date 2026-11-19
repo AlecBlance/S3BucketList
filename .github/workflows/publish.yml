@@ -9,6 +9,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -32,7 +33,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload assets
-        if: steps.changesets.outputs.hasChangesets == 'false'
+        if: steps.changesets.outputs.published == 'true'
         run: |
           version=${{ fromJson(steps.changesets.outputs.publishedPackages)[0].version }}
           pnpm run zip
@@ -41,3 +42,19 @@ jobs:
           gh release upload v${version} s3bucketlist-${version}-chrome.zip s3bucketlist-${version}-firefox.zip
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Submit Chrome extension for publishing
+        if: steps.changesets.outputs.published == 'true'
+        env:
+          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+        run: |
+          for name in CHROME_EXTENSION_ID CHROME_CLIENT_ID CHROME_CLIENT_SECRET CHROME_REFRESH_TOKEN; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing repository Actions secret: ${name}"
+              exit 1
+            fi
+          done
+          version=$(node -p "require('./package.json').version")
+          pnpm exec wxt submit --chrome-zip "dist/s3bucketlist-${version}-chrome.zip"

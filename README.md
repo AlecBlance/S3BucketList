@@ -57,3 +57,46 @@ You can install this extension from the [Firefox add-ons](https://addons.mozilla
 4. Do `pnpm zip` for chrome-compatible version or `pnpm zip:firefox` for firefox-compatible version.
 5. A zip file will be created in the `dist/` folder
 6. Follow the manual installation steps above on how to install the extension.
+
+## Automated Chrome Web Store releases
+
+Merge the fix and feature PRs first, then merge the Changesets **Version Packages**
+PR when ready to release. After successful CI, the Publish workflow creates the
+GitHub release, builds and attaches the Chrome and Firefox ZIPs, and submits the
+Chrome ZIP to the existing Chrome Web Store listing. Google still reviews the
+update; submission does not mean it is immediately live. Firefox store submission
+is not automated by this workflow.
+
+### One-time setup
+
+1. Enable the Chrome Web Store API in a Google Cloud project and create an OAuth
+   client using the [official authorization guide](https://developer.chrome.com/docs/webstore/using-api).
+2. Authorize the Google account that manages the existing store listing with the
+   `https://www.googleapis.com/auth/chromewebstore` scope and obtain a refresh
+   token. For unattended releases, do not leave an External OAuth app in Testing
+   mode: refresh tokens for this scope expire after seven days in that mode.
+3. In GitHub, open **Settings > Secrets and variables > Actions** and add:
+
+   | Repository secret | Value |
+   | --- | --- |
+   | `CHROME_EXTENSION_ID` | Existing listing ID: `anngjobjhcbancaaogmlcffohpmcniki` |
+   | `CHROME_CLIENT_ID` | Google OAuth client ID |
+   | `CHROME_CLIENT_SECRET` | Google OAuth client secret |
+   | `CHROME_REFRESH_TOKEN` | Refresh token for the account managing the listing |
+
+Keep credentials out of source files, PRs, and logs. Before the first release, use
+Node.js 20 (matching CI), build the Chrome ZIP, and test the credentials locally
+using WXT's dry-run mode, with the four environment variables above supplied
+securely:
+
+```sh
+pnpm zip
+pnpm exec wxt submit --dry-run --chrome-zip "dist/s3bucketlist-$(node -p "require('./package.json').version")-chrome.zip"
+```
+
+Missing credentials or a rejected submission fail the Publish workflow visibly.
+The GitHub release and ZIPs are created before store submission, so they remain
+available if submission fails. Do not bump the version merely to retry an upload
+failure: inspect the store status first, then use `wxt submit` with the existing
+release's Chrome ZIP if it has not already been submitted. An update already under
+review should be monitored in the store dashboard rather than submitted again.
