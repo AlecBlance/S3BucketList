@@ -69,34 +69,42 @@ is not automated by this workflow.
 
 ### One-time setup
 
-1. Enable the Chrome Web Store API in a Google Cloud project and create an OAuth
-   client using the [official authorization guide](https://developer.chrome.com/docs/webstore/using-api).
-2. Authorize the Google account that manages the existing store listing with the
-   `https://www.googleapis.com/auth/chromewebstore` scope and obtain a refresh
-   token. For unattended releases, do not leave an External OAuth app in Testing
-   mode: refresh tokens for this scope expire after seven days in that mode.
+1. Enable the Chrome Web Store API in a dedicated Google Cloud project and create
+   a service account **without Google Cloud project roles**, following the
+   [official service-account guide](https://developer.chrome.com/docs/webstore/service-accounts).
+2. Add its email in the Chrome Web Store Developer Dashboard under
+   **Settings > Service account**. Google grants API access to all items owned by
+   that publisher. The release script deliberately fixes the target to
+   S3BucketList (`anngjobjhcbancaaogmlcffohpmcniki`).
 3. In GitHub, open **Settings > Secrets and variables > Actions** and add:
 
    | Repository secret | Value |
    | --- | --- |
-   | `CHROME_EXTENSION_ID` | Existing listing ID: `anngjobjhcbancaaogmlcffohpmcniki` |
-   | `CHROME_CLIENT_ID` | Google OAuth client ID |
-   | `CHROME_CLIENT_SECRET` | Google OAuth client secret |
-   | `CHROME_REFRESH_TOKEN` | Refresh token for the account managing the listing |
+   | `CHROME_SERVICE_ACCOUNT_KEY` | Full JSON key created for the dedicated service account |
+   | `CHROME_PUBLISHER_ID` | Publisher ID from the store dashboard's Settings page |
 
-Keep credentials out of source files, PRs, and logs. Before the first release, use
-Node.js 20 (matching CI), build the Chrome ZIP, and test the credentials locally
-using WXT's dry-run mode, with the four environment variables above supplied
-securely:
+This is private server-to-server publishing: no public OAuth consent screen,
+homepage, privacy-policy URL, client secret, or refresh token is required for
+this authentication method. It does not change the extension's store policy
+obligations.
+
+Keep the JSON key out of source files, PRs, and logs. Supply the two environment
+variables above securely and run this read-only check using Node.js 20 (matching
+CI) before the first release:
 
 ```sh
-pnpm zip
-pnpm exec wxt submit --dry-run --chrome-zip "dist/s3bucketlist-$(node -p "require('./package.json').version")-chrome.zip"
+node scripts/publish-chrome.mjs --dry-run
 ```
 
 Missing credentials or a rejected submission fail the Publish workflow visibly.
 The GitHub release and ZIPs are created before store submission, so they remain
 available if submission fails. Do not bump the version merely to retry an upload
-failure: inspect the store status first, then use `wxt submit` with the existing
-release's Chrome ZIP if it has not already been submitted. An update already under
-review should be monitored in the store dashboard rather than submitted again.
+failure: inspect the store status first, then run `node scripts/publish-chrome.mjs
+<chrome-zip-path>` from the release's Git tag with the existing release's Chrome
+ZIP. The script skips already-published or already-submitted versions, refuses to
+replace another pending or staged version, waits for asynchronous uploads, and
+blocks publication on store warnings. Google review is not bypassed.
+
+Rotate the service account key periodically. After saving a new key as the GitHub
+secret and verifying read access, delete the superseded key in Google Cloud.
+Never commit a downloaded key file.

@@ -45,16 +45,8 @@ jobs:
       - name: Submit Chrome extension for publishing
         if: steps.changesets.outputs.published == 'true'
         env:
-          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
-          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
-          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
-          CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          CHROME_SERVICE_ACCOUNT_KEY: ${{ secrets.CHROME_SERVICE_ACCOUNT_KEY }}
+          CHROME_PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
         run: |
-          for name in CHROME_EXTENSION_ID CHROME_CLIENT_ID CHROME_CLIENT_SECRET CHROME_REFRESH_TOKEN; do
-            if [ -z "${!name}" ]; then
-              echo "::error::Missing repository Actions secret: ${name}"
-              exit 1
-            fi
-          done
           version=$(node -p "require('./package.json').version")
-          pnpm exec wxt submit --chrome-zip "dist/s3bucketlist-${version}-chrome.zip"
+          node scripts/publish-chrome.mjs "dist/s3bucketlist-${version}-chrome.zip"
