@@ -1,7 +1,6 @@
 import { IBucket } from "@/@types";
 import { isReqBucket, getBucketInfo } from "@/lib/bucket";
 import { bucketsStorage } from "@/lib/storage";
-import { logger } from "../logger";
 import { addBadgeNumber } from "./badge";
 
 /**
@@ -15,7 +14,7 @@ export const bucketRecorder = async (
   const { hostname, pathname } = new URL(request.url);
   const bucketUrl = cleanBucketUrl(hostname, pathname);
   const bucketInfo = await getBucketInfo(bucketUrl);
-  addToBucketStorage({
+  await addToBucketStorage({
     ...bucketInfo,
     initiator: request.initiator, //where the request came from
   });
@@ -42,19 +41,35 @@ export function cleanBucketUrl(hostname: string, pathname: string): string {
 
   return hostname;
 }
-/**
- * Adds bucket information to the storage
- */
+// All mutations run in the background, including popup deletion requests.
+let storageQueue: Promise<unknown> = Promise.resolve();
+
+const updateBucketStorage = (
+  update: (buckets: IBucket[]) => IBucket[],
+): Promise<IBucket[]> => {
+  const operation = storageQueue.then(async () => {
+    const buckets = update(await bucketsStorage.getValue());
+    await bucketsStorage.setValue(buckets);
+    await addBadgeNumber(buckets);
+    return buckets;
+  });
+  storageQueue = operation.catch(() => undefined);
+  return operation;
+};
+
 export const addToBucketStorage = async (
   bucketInfo: IBucket,
 ): Promise<void> => {
-  const bucketsList = await bucketsStorage.getValue();
-  const isRecorded = bucketsList.some(
-    (bucket) => bucket.hostname === bucketInfo.hostname,
-  );
-  if (isRecorded) return;
-  bucketsList.push(bucketInfo);
-  bucketsStorage.setValue(bucketsList);
-  addBadgeNumber(bucketsList);
-  logger("Bucket added to storage", bucketInfo);
+  await updateBucketStorage((buckets) => {
+    if (buckets.some((bucket) => bucket.hostname === bucketInfo.hostname))
+      return buckets;
+    return [...buckets, bucketInfo];
+  });
 };
+
+export const removeFromBucketStorage = (
+  hostnames: string[],
+): Promise<IBucket[]> =>
+  updateBucketStorage((buckets) =>
+    buckets.filter((bucket) => !hostnames.includes(bucket.hostname)),
+  );

@@ -18,6 +18,7 @@ jobs:
           cache: "pnpm"
 
       - run: pnpm install --frozen-lockfile
+      - run: node --test scripts/publish-chrome.node-test.mjs
       - run: pnpm run test
 
   build:
