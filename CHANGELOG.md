@@ -1,5 +1,17 @@
 # s3bucketlist
 
+## 4.1.3
+
+### Patch Changes
+
+- 385019e: Handle empty bucket lists safely when downloading recorded buckets.
+- 94fac23: Avoid repeated permission checks for buckets that are already recorded or being inspected.
+- cdb8a9d: Handle bucket inspection network errors without breaking recording or reporting failed checks as confirmed access results.
+- 44c4427: Stop treating S3 log delivery ACL permissions as public access.
+- ef98267: Preserve the recording setting across browser restarts and keep the recording switch in sync with the background state.
+- 7a7764c: Keep popup data synchronized with storage changes, handle bucket deletion consistently, and correct release publishing conditions.
+- 393a27a: Prevent simultaneous bucket updates from overwriting recorded buckets.
+
 ## 4.1.2
 
 ### Patch Changes
