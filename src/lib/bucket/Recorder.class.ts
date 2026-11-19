@@ -14,7 +14,9 @@ export default class Recorder {
   ) => {
     // Filter requests based on the tab IDs if tabs are set
     if (this.tabs.length && !this.tabs.includes(String(request.tabId))) return;
-    bucketRecorder(request);
+    void bucketRecorder(request).catch((error) => {
+      logger("Failed to record bucket:", error);
+    });
   };
 
   public stopRecording(): void {

@@ -4,6 +4,7 @@ import { Agent } from "https";
 import { CheerioAPI, load } from "cheerio";
 
 const axiosInstance = axios.create({
+  timeout: 15_000,
   httpsAgent: new Agent({ rejectUnauthorized: false }),
 });
 
@@ -19,6 +20,12 @@ export const getBucketInfo = async (
   ]);
   const isAclAvailable = getBucketAcl.status === "fulfilled";
   const isBucketAvailable = getBucket.status === "fulfilled";
+
+  if (getBucket.status === "rejected" && !getBucket.reason?.response) {
+    throw new Error(`Unable to inspect bucket ${bucketName}`, {
+      cause: getBucket.reason,
+    });
+  }
 
   let owner: string | undefined = undefined;
   let aclPermissions: Omit<IPermissions, "ListBucket"> = {};
@@ -37,7 +44,7 @@ export const getBucketInfo = async (
 
   const owned = !(
     getBucket.status === "rejected" &&
-    getBucket.reason.response.status === 404 &&
+    getBucket.reason?.response?.status === 404 &&
     load(getBucket.reason.response.data)("Code").text() === "NoSuchBucket"
   );
 
