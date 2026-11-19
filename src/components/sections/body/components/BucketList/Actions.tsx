@@ -1,5 +1,6 @@
 import { IBucket } from "@/@types";
 import useBucket from "@/lib/store/useBucket.store";
+import { downloadBuckets } from "@/lib/bucket/download";
 import { sendMessage } from "webext-bridge/popup";
 import { logger } from "@/lib/logger";
 
@@ -19,22 +20,6 @@ const Actions = ({ buckets }: { buckets: IBucket[] }) => {
     }
   };
 
-  const handleDownload = () => {
-    if (buckets.length === 0) {
-      alert("No buckets to download.");
-    }
-    const data = JSON.stringify(buckets, null, 2);
-    const blob = new Blob([data], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `buckets-${buckets[0].public ? "public" : "private"}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
   return (
     <div className="flex items-center justify-between">
       <p>
@@ -51,8 +36,9 @@ const Actions = ({ buckets }: { buckets: IBucket[] }) => {
         </button>
         <p>-</p>
         <button
-          className="hover:text-primary cursor-pointer"
-          onClick={handleDownload}
+          className="hover:text-primary cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={buckets.length === 0}
+          onClick={() => downloadBuckets(buckets)}
         >
           Download
         </button>
