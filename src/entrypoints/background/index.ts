@@ -8,14 +8,13 @@ export default defineBackground({
   main: () => {
     logger("Background script loaded");
     const recorder = new Recorder();
-    recorder.startRecording();
 
     onMessage("setToRecord", ({ data }) => {
-      data ? recorder.startRecording() : recorder.stopRecording();
+      return data ? recorder.startRecording() : recorder.stopRecording();
     });
 
     onMessage("settings:tabOnly", ({ data }) => {
-      recorder.setTabs(data as string[]);
+      return recorder.setTabs(data as string[]);
     });
 
     onMessage("buckets:remove", ({ data }) => {

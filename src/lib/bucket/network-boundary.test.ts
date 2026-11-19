@@ -13,7 +13,7 @@ it("contains rejected inspections at the webRequest boundary", async () => {
     .mockImplementation(() => {});
   const error = new Error("Network Error");
   record.mockRejectedValueOnce(error);
-  new Recorder().startRecording();
+  await new Recorder().startRecording();
   const receive = addListener.mock.calls[0][0];
   expect(receive(s3Request)).toBeUndefined();
   await vi.waitFor(() =>
