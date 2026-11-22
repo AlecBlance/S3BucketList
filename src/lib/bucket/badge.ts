@@ -1,20 +1,16 @@
 import { IBucket } from "@/@types";
-import { lastSeenStorage } from "../storage";
+import { needsReview } from "./triage";
 
 /**
  * Add badge number
  */
 
 export const addBadgeNumber = async (buckets: IBucket[]): Promise<void> => {
-  const lastSeen = await lastSeenStorage.getValue();
-  const unseenPublicBuckets = buckets.filter(
-    (bucket) => bucket.public && bucket.date > lastSeen,
-  ).length;
-  if (!unseenPublicBuckets) return;
-  (browser.action ?? browser.browserAction).setBadgeText({
-    text: unseenPublicBuckets.toString(),
+  const count = buckets.filter(needsReview).length;
+  await (browser.action ?? browser.browserAction).setBadgeText({
+    text: count ? count.toString() : "",
   });
-  (browser.action ?? browser.browserAction).setBadgeBackgroundColor({
+  await (browser.action ?? browser.browserAction).setBadgeBackgroundColor({
     color: "green",
   });
 };

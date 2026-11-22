@@ -9,6 +9,10 @@ vi.mock("@/lib/bucket", () => ({ bucketRecorder: record }));
 describe("Recorder lifecycle", () => {
   beforeEach(async () => {
     vi.restoreAllMocks();
+    vi.spyOn(
+      browser.webRequest.onErrorOccurred,
+      "addListener",
+    ).mockImplementation(() => {});
     fakeBrowser.reset();
     await isRecordingStorage.setValue(true);
     await settingsStorage.setValue({ tabOnly: { enabled: false, tabIds: [] } });
@@ -72,5 +76,31 @@ describe("Recorder lifecycle", () => {
     const { receive } = setup();
     await receive(s3Request);
     expect(record).not.toHaveBeenCalled();
+  });
+
+  it("captures failed requests without response headers, without counting one request twice", async () => {
+    const { recorder, addListener } = setup();
+    await recorder.startRecording();
+    const fail = vi.mocked(browser.webRequest.onErrorOccurred.addListener).mock
+      .calls[0][0];
+    const errorRequest = {
+      ...s3Request,
+      error: "net::ERR_CONNECTION_RESET",
+      fromCache: false,
+    };
+    fail(errorRequest);
+    await vi.waitFor(() => expect(record).toHaveBeenCalledOnce());
+    expect(record).toHaveBeenCalledWith(
+      expect.objectContaining({
+        statusCode: 0,
+        responseHeaders: [],
+      }),
+    );
+    record.mockClear();
+    addListener.mock.calls[0][0]({ ...s3Request, requestId: "headers-seen" });
+    await vi.waitFor(() => expect(record).toHaveBeenCalledOnce());
+    fail({ ...errorRequest, requestId: "headers-seen" });
+    await Promise.resolve();
+    expect(record).toHaveBeenCalledOnce();
   });
 });

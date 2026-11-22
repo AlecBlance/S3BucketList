@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { bucketRecorder } from "./recorder";
+import { bucketRecorder, retryBucketInspection } from "./recorder";
 import { bucketsStorage } from "@/lib/storage";
 import { fakeIBucketInfo, s3Request } from "@/_test/index.config";
 
@@ -43,6 +43,8 @@ describe("inspection deduplication", () => {
     getInfo.mockRejectedValueOnce(new Error("Network Error"));
     await expect(bucketRecorder(s3Request)).rejects.toThrow("Network Error");
     await bucketRecorder(s3Request);
+    expect(getInfo).toHaveBeenCalledTimes(1);
+    await retryBucketInspection("sample.s3.amazonaws.com");
     expect(getInfo).toHaveBeenCalledTimes(2);
     expect(await bucketsStorage.getValue()).toHaveLength(1);
   });

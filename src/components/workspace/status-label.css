@@ -1,0 +1,147 @@
+.status-with-help {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  max-width: 100%;
+  padding: 3px 7px;
+  border: 1px solid var(--status-border, #ffffff18);
+  border-radius: 5px;
+  background: var(--status-bg, #ffffff06);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.status-text {
+  color: var(--status-color, #b8b8c5);
+}
+[data-tone="allowed"] {
+  --status-color: #98d1b0;
+  --status-bg: #56b88014;
+  --status-border: #56b88045;
+}
+[data-tone="risk"],
+[data-tone="denied"] {
+  --status-color: #ffaaa4;
+  --status-bg: #e45b5214;
+  --status-border: #e45b5245;
+}
+[data-tone="review"] {
+  --status-color: #edcb82;
+  --status-bg: #dcae4612;
+  --status-border: #dcae4638;
+}
+[data-tone="identity"] {
+  --status-color: #d1b5ff;
+  --status-bg: #a878e51a;
+  --status-border: #a878e54d;
+}
+[data-tone="active"] {
+  --status-color: #91d8dc;
+  --status-bg: #5abfc612;
+  --status-border: #5abfc638;
+}
+[data-tone="neutral"] {
+  --status-color: #b8b8c5;
+  --status-bg: #ffffff06;
+  --status-border: #ffffff18;
+}
+.permission-result[data-tone] {
+  display: inline-block;
+  padding: 3px 8px;
+  border: 1px solid var(--status-border);
+  border-radius: 5px;
+  background: var(--status-bg);
+  color: var(--status-color);
+  font-weight: 550;
+}
+.status-info-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  margin: -3px -4px -3px 0;
+  padding: 3px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--status-color, inherit);
+  opacity: 0.85;
+  cursor: pointer;
+}
+.status-info-button:hover,
+.status-info-button[data-state="open"] {
+  opacity: 1;
+  background: #ffffff14;
+}
+.status-info-button:focus-visible,
+.status-info-popover:focus-visible {
+  outline: 2px solid var(--ws-accent, #e15343);
+  outline-offset: 2px;
+}
+.status-info-popover {
+  z-index: 70;
+  width: 310px;
+  max-width: calc(100vw - 24px);
+  max-height: var(--radix-popover-content-available-height);
+  overflow-y: auto;
+  padding: 15px 17px;
+  border: 1px solid #4b4b54;
+  border-radius: 8px;
+  background: #252529;
+  color: #ededf1;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  box-shadow: 0 8px 24px #0005;
+}
+.status-info-popover strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+.status-info-popover p {
+  font-size: 12px;
+  line-height: 1.75;
+  color: #c1c1cb;
+  margin: 0;
+}
+.status-info-popover {
+  box-sizing: border-box;
+}
+.status-info-arrow {
+  fill: #4b4b54;
+}
+.bucket-row-content {
+  min-width: 0;
+  flex: 1;
+}
+/* Stretch the native button over its row, without nesting help/checkboxes in it. */
+.bucket-row,
+.popup-bucket-item {
+  position: relative;
+  isolation: isolate;
+}
+.bucket-row-main::after,
+.popup-bucket-row::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  cursor: pointer;
+}
+.bucket-row > input,
+.bucket-row .status-info-button,
+.popup-bucket-item .status-info-button {
+  position: relative;
+  z-index: 2;
+}
+.bucket-row:has(.bucket-row-main:focus-visible),
+.popup-bucket-item:has(.popup-bucket-row:focus-visible) {
+  outline: 2px solid var(--ws-accent, #e15343);
+  outline-offset: -2px;
+}
+.bucket-row .bucket-row-main:focus-visible,
+.popup-bucket-item .popup-bucket-row:focus-visible {
+  outline: none;
+}

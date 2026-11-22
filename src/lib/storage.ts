@@ -1,4 +1,13 @@
-import { IBucket, ISettings } from "@/@types";
+import { IBucket, ISettings, ICheckJob } from "@/@types";
+
+export const workspaceIntroStorage = storage.defineItem<boolean>(
+  "local:workspaceIntroSeen",
+  { fallback: false },
+);
+
+export const jobsStorage = storage.defineItem<ICheckJob[]>("local:checkJobs", {
+  fallback: [],
+});
 
 export const bucketsStorage = storage.defineItem<IBucket[]>("local:buckets", {
   fallback: [],

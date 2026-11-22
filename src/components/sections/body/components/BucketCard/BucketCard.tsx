@@ -3,26 +3,14 @@ import { Badge } from "@/components/ui/badge";
 import { IBucket } from "@/@types";
 import OptionsDropdown from "./OptionsDropdown";
 import useLastSeen from "@/lib/store/useLastSeen.store";
+import { findingLabels } from "@/lib/bucket/findings";
+import BucketDetails from "./BucketDetails";
 
-type BucketCardProps = Pick<
-  IBucket,
-  "hostname" | "initiator" | "permissions" | "date" | "owned"
->;
+type BucketCardProps = IBucket;
 
-const BucketCard = ({
-  hostname,
-  initiator,
-  permissions,
-  date,
-  owned,
-}: BucketCardProps) => {
+const BucketCard = (bucket: BucketCardProps) => {
+  const { hostname, initiator, date, checkStatus, observations } = bucket;
   const { lastSeen } = useLastSeen((state) => state);
-
-  const labelMap: Record<string, string> = {
-    AllUsers: "All",
-    AuthenticatedUsers: "Auth",
-    LogDelivery: "Log",
-  };
 
   return (
     <div>
@@ -31,12 +19,25 @@ const BucketCard = ({
           <CardHeader className="flex items-center justify-between px-4">
             <CardTitle className="flex space-x-2 truncate text-sm">
               {lastSeen < date && <Badge>New</Badge>}
-              {owned === false && (
-                <Badge className="bg-red-500">Unclaimed</Badge>
+              {checkStatus && (
+                <Badge variant="secondary">
+                  {
+                    {
+                      pending: "Not checked",
+                      checking: "Checking",
+                      checked: "Checked",
+                      failed: "Check failed",
+                    }[checkStatus]
+                  }
+                </Badge>
               )}
               <p className="truncate">{hostname}</p>{" "}
             </CardTitle>
-            <OptionsDropdown hostname={hostname} />
+            <OptionsDropdown
+              hostname={hostname}
+              checkStatus={checkStatus}
+              endpoint={bucket.endpoint}
+            />
           </CardHeader>
           <CardContent className="px-4">
             {initiator && (
@@ -44,27 +45,21 @@ const BucketCard = ({
                 <b className="text-primary">From:</b> {initiator}
               </p>
             )}
-
-            <div className="flex flex-wrap gap-x-2">
-              {["AllUsers", "AuthenticatedUsers", "LogDelivery"].map((key) => {
-                const perms = permissions[key as keyof typeof permissions];
-                return (
-                  Array.isArray(perms) &&
-                  perms.length > 0 && (
-                    <p className="space-x-1" key={key}>
-                      <b className="text-primary">{labelMap[key]}:</b>
-                      {perms.map((perm: string) => (
-                        <span key={perm}>{perm}</span>
-                      ))}
-                    </p>
-                  )
-                );
-              })}
-              {permissions.ListBucket && (
+            <div className="flex flex-wrap gap-1">
+              {findingLabels(bucket).map((label) => (
+                <Badge key={label} variant="secondary">
+                  {label}
+                </Badge>
+              ))}
+            </div>
+            <div className="mt-2 flex items-center justify-between text-xs">
+              {observations && (
                 <p>
-                  <b className="text-primary">ListBucket:</b> true
+                  Seen {observations.sightings}{" "}
+                  {observations.sightings === 1 ? "time" : "times"}
                 </p>
               )}
+              <BucketDetails bucket={bucket} />
             </div>
           </CardContent>
         </div>
