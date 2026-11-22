@@ -12,7 +12,7 @@ import {
   previewBucketObjects,
   cancelBucketChecks,
 } from "./recorder";
-import { bucketsStorage } from "@/lib/storage";
+import { bucketsStorage, tabDiscoveriesStorage } from "@/lib/storage";
 import { fakeIBucketInfo, s3Request } from "@/_test/index.config";
 
 const { getInfo } = vi.hoisted(() => ({ getInfo: vi.fn() }));
@@ -38,6 +38,7 @@ describe("save before checking", () => {
     );
     const first = bucketRecorder({
       ...s3Request,
+      tabId: 12,
       initiator: "https://app.example",
     });
     await vi.waitFor(() => expect(getInfo).toHaveBeenCalledOnce());
@@ -46,8 +47,19 @@ describe("save before checking", () => {
       hostname: "sample.s3.amazonaws.com",
       checkStatus: "checking",
     });
+    await vi.waitFor(async () =>
+      expect((await tabDiscoveriesStorage.getValue())[12]).toEqual([
+        {
+          hostname: saved.hostname,
+          recordId: saved.recordId,
+          site: "https://app.example",
+          unread: true,
+        },
+      ]),
+    );
     const second = bucketRecorder({
       ...s3Request,
+      tabId: 24,
       initiator: "https://other.example",
     });
     await vi.waitFor(async () => {
@@ -66,6 +78,11 @@ describe("save before checking", () => {
       "https://other.example",
     ]);
     expect(getInfo).toHaveBeenCalledOnce();
+    await vi.waitFor(async () => {
+      const tabs = await tabDiscoveriesStorage.getValue();
+      expect(tabs[12][0].site).toBe("https://app.example");
+      expect(tabs[24][0].site).toBe("https://other.example");
+    });
   });
 
   it("keeps failed discoveries and retries without adding a sighting", async () => {

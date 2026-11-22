@@ -944,11 +944,6 @@ body.popup-body {
   font-size: 16px;
   font-weight: 550;
 }
-.popup-review-heading h1 > span {
-  color: var(--ws-muted);
-  margin-left: 7px;
-  font-size: 13px;
-}
 .popup-review-heading > p {
   color: var(--ws-muted);
   font-size: 11px;
@@ -1009,12 +1004,6 @@ body.popup-body {
 }
 .popup-footer .quiet {
   font-size: 10px;
-}
-.popup-privacy {
-  text-align: center;
-  color: var(--ws-muted);
-  font-size: 10px;
-  padding: 0 18px 12px;
 }
 .popup-message {
   padding: 9px 20px;

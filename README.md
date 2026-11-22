@@ -54,8 +54,12 @@ You can install this extension from the [Firefox add-ons](https://addons.mozilla
 ### Local discovery history
 
 Discovered buckets are saved before checks run, so a failed check does not remove
-them. The popup is a compact **Needs review** list. Click a bucket to open its full
-workspace in an extension tab. An existing workspace tab is reused.
+them. The **This tab** popup shows up to 20 recent discoveries from the active
+tab, independent of review status. The green toolbar badge counts new bucket
+discoveries for that tab; opening the popup clears the number, not the list.
+Tab activity lasts for the browser session and is cleared when the tab closes.
+Saved history and **Needs review** stay in the dashboard. Click a bucket to open
+its details in the workspace; an existing workspace tab is reused.
 The workspace's **Recording settings** button keeps tab-specific recording
 available without adding settings to the popup list.
 
@@ -82,7 +86,6 @@ The workspace defaults to **Needs review**, prioritizing explicit file metadata
 access and reported public write grants, then newly allowed access, listing, and
 readable ACL evidence. This is a review queue, not a
 list of confirmed vulnerabilities: intentionally public datasets can be expected.
-The popup and extension badge count only these unreviewed access signals.
 
 **All discoveries** keeps unknown/CDN addresses, blocked results, browser file
 responses, signed links, and unchecked page references available without putting
@@ -130,8 +133,8 @@ bucket is one navigation target with one hover surface; status text adds
 context without creating a second surface. The info button keeps its own
 focus and action. Check hover on the bucket name, status text, and row padding.
 
-**Mark expected** keeps all evidence but removes the discovery from Needs review
-and the badge. Repeat sightings and inconclusive checks do not undo it. A newly
+**Mark expected** keeps all evidence but removes the discovery from Needs review.
+Repeat sightings and inconclusive checks do not undo it. A newly
 confirmed listing/ACL change can reopen review if access still needs attention.
 New broad ACL grants also reopen an expected discovery, even when ACL readability
 itself has not changed.

@@ -1,7 +1,7 @@
 import { IBucket } from "@/@types";
 import { isReqBucket, getBucketInfo } from "@/lib/bucket";
 import { bucketsStorage } from "@/lib/storage";
-import { addBadgeNumber } from "./badge";
+import { recordTabDiscovery } from "./tab-discoveries";
 import { observeBucket } from "./observations";
 import { parseS3Url } from "./endpoints";
 import { appendCheck } from "./history";
@@ -93,6 +93,10 @@ export const bucketRecorder = async (
       : [...buckets, observed];
   });
   const bucket = buckets.find((item) => item.endpoint?.key === endpoint.key)!;
+  // Session UI is best-effort and never blocks or changes saved scan evidence.
+  void recordTabDiscovery(request.tabId, bucket, request.initiator).catch(
+    () => undefined,
+  );
   if (!bucket.endpoint?.apiUrl) return;
   // Legacy records were already inspected. Do not inspect them again automatically.
   if (
@@ -501,8 +505,6 @@ const updateBucketStorage = (
   const operation = storageQueue.then(async () => {
     const buckets = update(await bucketsStorage.getValue());
     await bucketsStorage.setValue(buckets);
-    // A cosmetic badge failure must never block persistence or checking.
-    await addBadgeNumber(buckets).catch(() => undefined);
     return buckets;
   });
   storageQueue = operation.catch(() => undefined);

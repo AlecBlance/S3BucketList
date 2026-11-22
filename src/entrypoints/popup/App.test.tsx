@@ -4,7 +4,7 @@ import { PopupView } from "./App";
 import { fakeIBucketInfo } from "@/_test/index.config";
 import { load } from "cheerio";
 describe("focused popup", () => {
-  it("only lists attention-worthy evidence with its referring site and reason", () => {
+  it("shows recent discoveries for this tab regardless of review status", () => {
     const buckets = [
       { ...fakeIBucketInfo, hostname: "cdn.example" },
       {
@@ -21,18 +21,33 @@ describe("focused popup", () => {
       },
     ];
     const html = renderToStaticMarkup(
-      <PopupView buckets={buckets} recording open={vi.fn()} toggle={vi.fn()} />,
+      <PopupView
+        buckets={buckets}
+        discoveries={[
+          {
+            hostname: "review.example",
+            site: "https://app.example",
+            unread: false,
+          },
+          { hostname: "expected.example", unread: false },
+        ]}
+        recording
+        open={vi.fn()}
+        toggle={vi.fn()}
+      />,
     );
     expect(html).toContain("review.example");
     expect(html).toContain("https://app.example");
     expect(html).toContain("Listing request allowed");
+    expect(html).toContain("This tab");
+    expect(html).toContain("Marked expected");
     expect(html).not.toMatch(
-      /cdn\.example|expected\.example|token=secret|Extract page|Search buckets/,
+      /cdn\.example|token=secret|Extract page|Search buckets/,
     );
     expect(html).toContain("View all discoveries");
     expect(html).toContain('src="/icon.svg"');
     const $ = load(html, { xml: true });
-    const row = $(".popup-bucket-item");
+    const row = $(".popup-bucket-item").first();
     expect(row.find(".popup-bucket-row").attr("aria-label")).toBe(
       "View review.example",
     );

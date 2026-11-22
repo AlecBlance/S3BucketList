@@ -1,17 +1,12 @@
-import { IBucket } from "@/@types";
-import { needsReview } from "./triage";
-
-/**
- * Add badge number
- */
-
-export const addBadgeNumber = async (buckets: IBucket[]): Promise<void> => {
-  const count = buckets.filter(needsReview).length;
-  await (browser.action ?? browser.browserAction).setBadgeText({
-    text: count ? count.toString() : "",
-  });
-  await (browser.action ?? browser.browserAction).setBadgeBackgroundColor({
-    color: "green",
+export const setTabBadge = async (
+  tabId: number,
+  count: number,
+): Promise<void> => {
+  const action = browser.action ?? browser.browserAction;
+  await action.setBadgeBackgroundColor({ tabId, color: "green" });
+  await action.setBadgeText({
+    tabId,
+    text: count > 99 ? "99+" : count ? String(count) : "",
   });
 };
 

@@ -1,17 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowUpRight, Pause, Play, Check } from "lucide-react";
 import type { IBucket } from "@/@types";
 import Brand from "@/components/workspace/Brand";
 import StatusLabel from "@/components/workspace/StatusLabel";
 import { useWorkspaceData } from "@/lib/hooks/useWorkspaceData";
 import { openWorkspace, sendCommand } from "@/lib/workspace-client";
-import {
-  needsReview,
-  referringSite,
-  reviewReason,
-  reviewHelpKey,
-  sortForReview,
-} from "@/lib/bucket/triage";
+import { reviewReason, reviewHelpKey } from "@/lib/bucket/triage";
+import { recentTabRows } from "@/lib/bucket/tab-discoveries";
+import { tabDiscoveriesStorage, type TabDiscovery } from "@/lib/storage";
+import { subscribeStorage } from "@/lib/subscribeStorage";
 import "@/components/workspace/workspace.css";
 
 export function PopupView({
@@ -20,14 +17,18 @@ export function PopupView({
   open,
   toggle,
   message = "",
+  discoveries,
+  loading = false,
 }: {
   buckets: IBucket[];
   recording: boolean;
   open(hostname?: string, view?: "review" | "all"): void;
   toggle(): void;
   message?: string;
+  discoveries: TabDiscovery[];
+  loading?: boolean;
 }) {
-  const review = sortForReview(buckets.filter(needsReview));
+  const rows = recentTabRows(discoveries, buckets);
   return (
     <div className="compact-popup focused-popup">
       <header className="popup-header">
@@ -42,25 +43,23 @@ export function PopupView({
         </button>
       </header>
       <div className="popup-review-heading">
-        <h1>
-          Needs review <span>{review.length}</span>
-        </h1>
-        <p>Anonymous access was confirmed. Some access may be intentional.</p>
+        <h1>This tab</h1>
+        <p>Recent S3 discoveries. Saved history is in the dashboard.</p>
       </div>
       <div className="popup-list">
-        {review.map((bucket) => (
+        {rows.map(({ bucket, site }) => (
           <div className="popup-bucket-item" key={bucket.hostname}>
             <button
               className="popup-bucket-row"
               aria-label={`View ${bucket.endpoint?.bucket ?? bucket.hostname}`}
               aria-describedby={`popup-reason-${encodeURIComponent(bucket.hostname)}`}
-              onClick={() => open(bucket.hostname)}
+              onClick={() => open(bucket.hostname, "all")}
             >
               <div>
                 <strong title={bucket.endpoint?.bucket ?? bucket.hostname}>
                   {bucket.endpoint?.bucket ?? bucket.hostname}
                 </strong>
-                <span className="row-site">{referringSite(bucket)}</span>
+                {site && <span className="row-site">{site}</span>}
               </div>
               <ArrowUpRight size={16} />
             </button>
@@ -75,12 +74,17 @@ export function PopupView({
             </div>
           </div>
         ))}
-        {!review.length && (
+        {!rows.length && (
           <div className="empty-state small">
             <Check size={28} />
-            <h3>Nothing needs review</h3>
+            <h3>
+              {loading ? "Loading this tab…" : "No discoveries in this tab"}
+            </h3>
             <p>
-              No unreviewed access findings. Other discoveries are still saved.
+              {!loading &&
+                (recording
+                  ? "Browse a site that uses S3, or open the dashboard to see saved discoveries."
+                  : "Recording is paused. Resume it to find new buckets.")}
             </p>
           </div>
         )}
@@ -99,9 +103,6 @@ export function PopupView({
           {recording ? "Recording" : "Paused"}
         </span>
       </footer>
-      <p className="popup-privacy">
-        Saved on this device. Expected buckets stay out of this list.
-      </p>
     </div>
   );
 }
@@ -109,6 +110,32 @@ export function PopupView({
 export default function App() {
   const { buckets, recording } = useWorkspaceData();
   const [message, setMessage] = useState("");
+  const [tabId, setTabId] = useState<number>();
+  const [loading, setLoading] = useState(true);
+  const [tabs, setTabs] = useState<Record<string, TabDiscovery[]>>({});
+  useEffect(() => subscribeStorage(tabDiscoveriesStorage, setTabs), []);
+  useEffect(() => {
+    let mounted = true;
+    void browser.tabs
+      .query({ active: true, currentWindow: true })
+      .then(async ([tab]) => {
+        if (!mounted || tab?.id === undefined || tab.id < 0) return;
+        setTabId(tab.id);
+        await sendCommand({ type: "popup:acknowledge-tab", tabId: tab.id });
+      })
+      .catch(() => {
+        if (mounted)
+          setMessage(
+            "Could not refresh this tab. Saved discoveries are still in the dashboard.",
+          );
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
   const open = async (hostname?: string, view: "review" | "all" = "review") => {
     try {
       await openWorkspace(hostname, view);
@@ -120,6 +147,8 @@ export default function App() {
   return (
     <PopupView
       buckets={buckets}
+      loading={loading}
+      discoveries={tabId === undefined ? [] : (tabs[tabId] ?? [])}
       recording={recording}
       message={message}
       open={(hostname, view) => void open(hostname, view)}

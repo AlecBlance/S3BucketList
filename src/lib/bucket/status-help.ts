@@ -7,7 +7,7 @@ export const STATUS_HELP: Record<string, string> = {
   "ACL reports public write access":
     "The readable ACL reports WRITE, WRITE_ACP, or FULL_CONTROL for Everyone. This is configured permission evidence, not an upload or ACL-change test. Policies, ownership settings, and Block Public Access may override the grant.",
   "Marked expected":
-    "You marked this discovery as expected. Evidence is kept, but it no longer appears in Needs review or the badge count. A newly confirmed change to listing or ACL results can reopen it; another sighting or an unclear retest will not.",
+    "You marked this discovery as expected. Evidence is kept, but it no longer appears in Needs review. Newly confirmed access or broader ACL grants can reopen it; another sighting or an unclear retest will not.",
   "No anonymous listing or ACL access found":
     "These checks did not confirm unsigned listing or readable ACL access. Individual files may still be accessible. This is not proof that a bucket is private or secure.",
   "Bucket unknown":

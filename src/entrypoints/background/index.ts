@@ -19,6 +19,10 @@ import { bucketsStorage, settingsStorage } from "@/lib/storage";
 import { collectPageReferences } from "@/lib/bucket/extract";
 import type { WorkspaceCommand } from "@/lib/workspace-client";
 import { runtimeHandler } from "@/lib/runtime-handler";
+import {
+  acknowledgeTabDiscoveries,
+  forgetTabDiscoveries,
+} from "@/lib/bucket/tab-discoveries";
 
 export default defineBackground({
   persistent: true,
@@ -35,6 +39,13 @@ export default defineBackground({
     });
     void browser.alarms.create("bucket-checks", { periodInMinutes: 1 });
     const recorder = new Recorder();
+    browser.tabs.onRemoved.addListener((tabId) => {
+      void forgetTabDiscoveries(tabId).catch(() => undefined);
+    });
+    // Clear the global badge from earlier versions; this version uses tab badges.
+    void (browser.action ?? browser.browserAction)
+      .setBadgeText({ text: "" })
+      .catch(() => undefined);
 
     browser.runtime.onMessage.addListener(
       runtimeHandler((raw, sender) => {
@@ -53,6 +64,9 @@ export default defineBackground({
               throw new Error("Invalid command.");
             let value: unknown;
             switch (command.type) {
+              case "popup:acknowledge-tab":
+                await acknowledgeTabDiscoveries(command.tabId);
+                break;
               case "buckets:add":
                 value = await addBucketTargets(command.inputs);
                 break;

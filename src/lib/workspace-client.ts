@@ -1,6 +1,7 @@
 import type { IBucket } from "@/@types";
 
 export type WorkspaceCommand =
+  | { type: "popup:acknowledge-tab"; tabId: number }
   | { type: "buckets:add"; inputs: string[] }
   | {
       type: "buckets:verify-object";
