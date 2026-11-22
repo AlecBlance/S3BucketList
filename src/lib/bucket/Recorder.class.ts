@@ -7,6 +7,7 @@ export default class Recorder {
   private tabs: string[] = [];
   private recording = false;
   private ready: Promise<void>;
+  private requestsWithHeaders = new Set<string>();
 
   constructor() {
     // Register synchronously so MV3 can wake the worker for webRequest events.
@@ -14,6 +15,18 @@ export default class Recorder {
       this.proxyBucketRecorder,
       { urls: ["<all_urls>"] },
       ["responseHeaders"],
+    );
+    browser.webRequest.onErrorOccurred.addListener(
+      (request) => {
+        if (this.requestsWithHeaders.has(request.requestId)) return;
+        this.proxyBucketRecorder({
+          ...request,
+          statusCode: 0,
+          statusLine: "",
+          responseHeaders: [],
+        });
+      },
+      { urls: ["<all_urls>"] },
     );
     this.ready = this.restoreSettings();
   }
@@ -40,6 +53,12 @@ export default class Recorder {
   private proxyBucketRecorder = (
     request: Browser.webRequest.WebResponseHeadersDetails,
   ): void => {
+    this.requestsWithHeaders.add(request.requestId);
+    if (this.requestsWithHeaders.size > 1000) {
+      this.requestsWithHeaders.delete(
+        this.requestsWithHeaders.values().next().value!,
+      );
+    }
     void this.recordRequest(request);
   };
 

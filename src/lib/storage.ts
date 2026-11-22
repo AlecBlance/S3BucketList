@@ -1,4 +1,24 @@
-import { IBucket, ISettings } from "@/@types";
+import { IBucket, ISettings, ICheckJob } from "@/@types";
+
+export interface TabDiscovery {
+  hostname: string;
+  recordId?: string;
+  site?: string;
+  unread: boolean;
+}
+
+export const tabDiscoveriesStorage = storage.defineItem<
+  Record<string, TabDiscovery[]>
+>("session:tabDiscoveries", { fallback: {} });
+
+export const workspaceIntroStorage = storage.defineItem<boolean>(
+  "local:workspaceIntroSeen",
+  { fallback: false },
+);
+
+export const jobsStorage = storage.defineItem<ICheckJob[]>("local:checkJobs", {
+  fallback: [],
+});
 
 export const bucketsStorage = storage.defineItem<IBucket[]>("local:buckets", {
   fallback: [],

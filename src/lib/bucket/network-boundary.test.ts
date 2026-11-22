@@ -8,6 +8,10 @@ vi.mock("@/lib/bucket", () => ({ bucketRecorder: record }));
 vi.mock("../logger", () => ({ logger: vi.fn() }));
 
 it("contains rejected inspections at the webRequest boundary", async () => {
+  vi.spyOn(
+    browser.webRequest.onErrorOccurred,
+    "addListener",
+  ).mockImplementation(() => {});
   const addListener = vi
     .spyOn(browser.webRequest.onHeadersReceived, "addListener")
     .mockImplementation(() => {});

@@ -11,7 +11,9 @@ const BucketList = ({ buckets }: { buckets: IBucket[] }) => {
 
   buckets = buckets.filter(
     (bucket) =>
-      bucket.hostname.includes(query) || bucket.initiator?.includes(query),
+      bucket.hostname.includes(query) ||
+      bucket.initiator?.includes(query) ||
+      bucket.observations?.sources.some((source) => source.includes(query)),
   );
 
   return (
@@ -24,14 +26,7 @@ const BucketList = ({ buckets }: { buckets: IBucket[] }) => {
         )}
       >
         {buckets.map((bucket) => (
-          <BucketCard
-            date={bucket.date}
-            hostname={bucket.hostname}
-            initiator={bucket.initiator}
-            permissions={bucket.permissions}
-            key={bucket.hostname}
-            owned={bucket.owned}
-          />
+          <BucketCard {...bucket} key={bucket.hostname} />
         ))}
       </div>
     </>

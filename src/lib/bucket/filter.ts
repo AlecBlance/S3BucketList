@@ -1,4 +1,5 @@
 import { logger } from "../logger";
+import { parseS3Url } from "./endpoints";
 
 /**
  * Checks if the request is an S3 bucket request
@@ -6,11 +7,10 @@ import { logger } from "../logger";
 export const isReqBucket = (
   request: Browser.webRequest.WebResponseHeadersDetails,
 ): boolean => {
-  logger("Checking request", request.url);
   return (
     !isExtensionRequest(request) &&
     !hasFavicon(request) &&
-    hasAmazonHeader(request)
+    (hasAmazonHeader(request) || !!parseS3Url(request.url))
   );
 };
 

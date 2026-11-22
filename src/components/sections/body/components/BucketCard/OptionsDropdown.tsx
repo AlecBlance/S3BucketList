@@ -10,11 +10,20 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import { sendMessage } from "webext-bridge/popup";
 import { logger } from "@/lib/logger";
 import useBucket from "@/lib/store/useBucket.store";
+import type { IBucket } from "@/@types";
 
-const OptionsDropdown = ({ hostname }: { hostname: string }) => {
+const OptionsDropdown = ({
+  hostname,
+  checkStatus,
+  endpoint,
+}: Pick<IBucket, "hostname" | "checkStatus" | "endpoint">) => {
   const { setBuckets } = useBucket((state) => state);
   const openInNewTab = () => {
-    window.open(`https://${hostname}`, "_blank", "noopener,noreferrer");
+    window.open(
+      endpoint?.apiUrl ?? `https://${hostname}`,
+      "_blank",
+      "noopener,noreferrer",
+    );
   };
 
   const deleteBucket = async () => {
@@ -27,6 +36,13 @@ const OptionsDropdown = ({ hostname }: { hostname: string }) => {
       setBuckets(updatedBuckets);
     } catch (error) {
       logger("Failed to delete bucket:", error);
+    }
+  };
+  const retryCheck = async () => {
+    try {
+      setBuckets(await sendMessage("buckets:retry", hostname, "background"));
+    } catch {
+      logger("Could not retry check");
     }
   };
 
@@ -44,6 +60,10 @@ const OptionsDropdown = ({ hostname }: { hostname: string }) => {
           <FaRegTrashAlt className="text-white" />
           Delete
         </DropdownMenuItem>
+        {(checkStatus === "failed" || checkStatus === "pending") &&
+          endpoint?.kind !== "custom" && (
+            <DropdownMenuItem onClick={retryCheck}>Retry</DropdownMenuItem>
+          )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
