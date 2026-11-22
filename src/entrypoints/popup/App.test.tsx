@@ -40,6 +40,7 @@ describe("focused popup", () => {
     expect(html).toContain("https://app.example");
     expect(html).toContain("Listing request allowed");
     expect(html).toContain("This tab");
+    expect(html).toContain("clears this tab’s badge");
     expect(html).toContain("Marked expected");
     expect(html).not.toMatch(
       /cdn\.example|token=secret|Extract page|Search buckets/,
@@ -57,5 +58,21 @@ describe("focused popup", () => {
     expect(row.find(".popup-bucket-row button")).toHaveLength(0);
     expect(row.find(".status-info-button")).toHaveLength(1);
     expect(row.find(".status-with-help").attr("data-tone")).toBe("allowed");
+  });
+
+  it("keeps the dashboard reachable when this tab has no discoveries", () => {
+    const html = renderToStaticMarkup(
+      <PopupView
+        buckets={[fakeIBucketInfo]}
+        discoveries={[]}
+        recording={false}
+        open={vi.fn()}
+        toggle={vi.fn()}
+      />,
+    );
+    expect(html).toContain("No discoveries in this tab");
+    expect(html).toContain("Recording is paused");
+    expect(html).toContain("View all discoveries");
+    expect(html).not.toContain(fakeIBucketInfo.hostname);
   });
 });

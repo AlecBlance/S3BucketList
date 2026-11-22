@@ -123,10 +123,8 @@ local records, select them and use **Remove selected**; the confirmation lists
 the exact records and does not change S3. Notes drafts stay while you switch
 buckets in the workspace. Save them before closing the tab.
 
-When reviewing UI changes, walk through the full interaction in a browser with
-sample data: opening and returning to a discovery, adding targets, scan progress
-and completion, file-tool forms, and errors or empty states. Check narrow layouts
-and keyboard focus as well as the default desktop view.
+See the [UI review checklist](AGENTS.md) for Design with Intent, Impeccable, and
+browser validation.
 
 Preserve the original S3 mark and green toolbar count. In the popup, each
 bucket is one navigation target with one hover surface; status text adds

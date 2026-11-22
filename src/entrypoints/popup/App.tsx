@@ -44,7 +44,7 @@ export function PopupView({
       </header>
       <div className="popup-review-heading">
         <h1>This tab</h1>
-        <p>Recent S3 discoveries. Saved history is in the dashboard.</p>
+        <p>Recent S3 discoveries. Opening this popup clears this tab’s badge.</p>
       </div>
       <div className="popup-list">
         {rows.map(({ bucket, site }) => (
